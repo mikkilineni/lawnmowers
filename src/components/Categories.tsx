@@ -1,6 +1,6 @@
-import { CATEGORIES } from "@/data/products";
+interface CategoryRow { id: number; name: string; emoji: string; price: string; slug: string; }
 
-export function Categories() {
+export function Categories({ categories }: { categories: CategoryRow[] }) {
   return (
     <section id="categories" style={{ background: "var(--white)", padding: "5rem 7%" }}>
       <div style={{ textAlign: "center", marginBottom: "3rem" }}>
@@ -13,7 +13,7 @@ export function Categories() {
         gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
         gap: "1.25rem",
       }}>
-        {CATEGORIES.map(cat => (
+        {categories.map(cat => (
           <a key={cat.slug} href={`#products`} style={{
             background: "var(--cream)",
             border: "2px solid transparent",

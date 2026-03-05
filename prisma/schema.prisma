@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Product {
+  id            Int      @id @default(autoincrement())
+  badge         String
+  badgeType     String
+  brand         String
+  name          String
+  emoji         String   @default("🌿")
+  rating        Float
+  reviewCount   Int
+  price         String
+  originalPrice String
+  savings       String
+  tags          String
+  categories    String
+  createdAt     DateTime @default(now())
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
+  emoji String
+  price String
+  slug  String @unique
+}
+
+model Review {
+  id       Int    @id @default(autoincrement())
+  text     String
+  name     String
+  location String
+  initial  String
+}
+
+model Guide {
+  id       Int    @id @default(autoincrement())
+  emoji    String
+  tag      String
+  title    String
+  readTime String
+  updated  String
+}
+
+model Brand {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}

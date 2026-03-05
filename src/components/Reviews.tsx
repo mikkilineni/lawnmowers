@@ -1,6 +1,6 @@
-import { REVIEWS } from "@/data/products";
+interface ReviewRow { id: number; text: string; name: string; location: string; initial: string; }
 
-export function Reviews() {
+export function Reviews({ reviews }: { reviews: ReviewRow[] }) {
   return (
     <section style={{ background: "var(--white)", padding: "5rem 7%" }}>
       <div style={{ textAlign: "center", marginBottom: "3rem" }}>
@@ -13,7 +13,7 @@ export function Reviews() {
         gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
         gap: "1.5rem",
       }}>
-        {REVIEWS.map(r => (
+        {reviews.map(r => (
           <div key={r.id} style={{
             background: "var(--cream)",
             borderRadius: 12,

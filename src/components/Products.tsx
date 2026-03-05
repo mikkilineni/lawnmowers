@@ -1,7 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { PRODUCTS, type BadgeType } from "@/data/products";
+
+type BadgeType = "best" | "popular" | "new" | "sale";
+
+export interface ProductRow {
+  id: number;
+  badge: string;
+  badgeType: string;
+  brand: string;
+  name: string;
+  emoji: string;
+  rating: number;
+  reviewCount: number;
+  price: string;
+  originalPrice: string;
+  savings: string;
+  tags: string[];
+  categories: string[];
+}
 
 const FILTERS = [
   { label: "All", value: "all" },
@@ -12,7 +29,7 @@ const FILTERS = [
   { label: "💰 Under $500", value: "under500" },
 ];
 
-const BADGE_COLORS: Record<BadgeType, { bg: string; color: string }> = {
+const BADGE_COLORS: Record<string, { bg: string; color: string }> = {
   best:    { bg: "rgba(168,216,50,0.15)", color: "var(--green)" },
   popular: { bg: "rgba(239,68,68,0.12)",  color: "#ef4444" },
   new:     { bg: "rgba(56,189,248,0.12)", color: "#0ea5e9" },
@@ -27,12 +44,12 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-export function Products() {
+export function Products({ products }: { products: ProductRow[] }) {
   const [active, setActive] = useState("all");
 
   const visible = active === "all"
-    ? PRODUCTS
-    : PRODUCTS.filter(p => p.categories.includes(active));
+    ? products
+    : products.filter(p => p.categories.includes(active));
 
   return (
     <section id="products" style={{ background: "var(--cream)", padding: "5rem 7%" }}>
@@ -146,7 +163,7 @@ export function Products() {
 
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: "0.75rem" }}>
                   <Stars rating={p.rating} />
-                  <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>{p.rating} ({p.reviews.toLocaleString()})</span>
+                  <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>{p.rating} ({p.reviewCount.toLocaleString()})</span>
                 </div>
 
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: "1rem" }}>

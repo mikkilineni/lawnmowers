@@ -1,6 +1,4 @@
-import { BRANDS } from "@/data/products";
-
-export function Brands() {
+export function Brands({ brands }: { brands: string[] }) {
   return (
     <section style={{
       background: "var(--charcoal)",
@@ -14,7 +12,7 @@ export function Brands() {
         TOP BRANDS WE COVER
       </span>
       <div style={{ display: "flex", gap: "2.5rem", flexWrap: "wrap", alignItems: "center" }}>
-        {BRANDS.map(b => (
+        {brands.map(b => (
           <span key={b} style={{
             fontFamily: "'Bebas Neue', sans-serif",
             fontSize: "1.1rem",

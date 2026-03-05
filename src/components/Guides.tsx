@@ -1,6 +1,6 @@
-import { GUIDES } from "@/data/products";
+interface GuideRow { id: number; emoji: string; tag: string; title: string; readTime: string; updated: string; }
 
-export function Guides() {
+export function Guides({ guides }: { guides: GuideRow[] }) {
   return (
     <section id="guides" style={{ background: "var(--cream)", padding: "5rem 7%" }}>
       <div style={{ textAlign: "center", marginBottom: "3rem" }}>
@@ -13,7 +13,7 @@ export function Guides() {
         gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
         gap: "1.5rem",
       }}>
-        {GUIDES.map(g => (
+        {guides.map(g => (
           <a key={g.id} href="#" style={{
             background: "var(--white)",
             borderRadius: 12,
