@@ -54,7 +54,7 @@ export function Products({ products }: { products: ProductRow[] }) {
     : products.filter(p => p.categories.includes(active));
 
   return (
-    <section id="products" style={{ background: "var(--cream)", padding: "5rem 7%" }}>
+    <section id="products" className="section-pad" style={{ background: "var(--cream)", padding: "5rem 7%" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
@@ -67,7 +67,7 @@ export function Products({ products }: { products: ProductRow[] }) {
       </div>
 
       {/* Filter Bar */}
-      <div style={{
+      <div className="filter-bar" style={{
         background: "var(--white)",
         borderRadius: 12,
         padding: "1rem 1.5rem",
@@ -79,7 +79,7 @@ export function Products({ products }: { products: ProductRow[] }) {
         gap: "1rem",
         boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
       }}>
-        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
+        <div className="filter-scroll" style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
           <span style={{ fontSize: "0.8rem", color: "var(--muted)", fontWeight: 600, marginRight: 4 }}>Filter:</span>
           {FILTERS.map(f => (
             <button key={f.value} onClick={() => setActive(f.value)} style={{
@@ -97,7 +97,7 @@ export function Products({ products }: { products: ProductRow[] }) {
             </button>
           ))}
         </div>
-        <select style={{
+        <select className="filter-sort" style={{
           border: "1px solid #ddd",
           borderRadius: 8,
           padding: "7px 12px",

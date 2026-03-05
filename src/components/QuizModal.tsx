@@ -162,7 +162,7 @@ export function QuizModal({ isOpen, onClose }: QuizModalProps) {
             </div>
           ) : (
             /* Options */
-            <div style={{
+            <div className="quiz-options" style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
               gap: "0.75rem",

@@ -7,14 +7,14 @@ const LINKS = {
 export function Footer() {
   return (
     <footer style={{ background: "var(--dark)", padding: "4rem 7% 2rem" }}>
-      <div style={{
+      <div className="footer-grid" style={{
         display: "grid",
         gridTemplateColumns: "2fr repeat(3, 1fr)",
         gap: "3rem",
         marginBottom: "3rem",
       }}>
         {/* Brand */}
-        <div>
+        <div className="footer-brand">
           <div style={{
             fontFamily: "'Bebas Neue', sans-serif",
             fontSize: "1.8rem",

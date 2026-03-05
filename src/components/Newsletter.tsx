@@ -12,7 +12,7 @@ export function Newsletter() {
   };
 
   return (
-    <section style={{
+    <section className="section-pad" style={{
       background: "linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%)",
       padding: "5rem 7%",
       textAlign: "center",
@@ -44,7 +44,7 @@ export function Newsletter() {
           ✓ You&apos;re on the list! Check your inbox.
         </div>
       ) : (
-        <form onSubmit={handleSubmit} style={{
+        <form onSubmit={handleSubmit} className="newsletter-form" style={{
           display: "flex",
           gap: "0",
           maxWidth: 480,
@@ -54,6 +54,7 @@ export function Newsletter() {
           overflow: "hidden",
         }}>
           <input
+            className="newsletter-input"
             type="email"
             placeholder="Enter your email address"
             value={email}
@@ -69,7 +70,7 @@ export function Newsletter() {
               color: "var(--dark)",
             }}
           />
-          <button type="submit" style={{
+          <button type="submit" className="newsletter-btn" style={{
             background: "var(--lime)",
             color: "var(--dark)",
             border: "none",

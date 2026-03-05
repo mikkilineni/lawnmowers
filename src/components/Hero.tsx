@@ -8,7 +8,7 @@ const PILLS = ["Gas", "Electric", "Battery", "Robotic", "Riding"];
 
 export function Hero({ onOpenQuiz }: HeroProps) {
   return (
-    <section id="top" style={{
+    <section id="top" className="hero-section" style={{
       minHeight: "100vh",
       background: `linear-gradient(135deg, var(--dark) 0%, var(--charcoal) 60%, #0f2d14 100%)`,
       display: "grid",
@@ -113,8 +113,8 @@ export function Hero({ onOpenQuiz }: HeroProps) {
         </div>
       </div>
 
-      {/* Right — featured card */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+      {/* Right — featured card (hidden on mobile) */}
+      <div className="hero-right" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
         <div style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: "clamp(5rem, 10vw, 9rem)",
