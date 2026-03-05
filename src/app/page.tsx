@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { ClientPage } from "@/components/ClientPage";
 import { seedIfEmpty } from "@/lib/seed";
 import prisma from "@/lib/prisma";
