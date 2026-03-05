@@ -7,6 +7,7 @@ interface Product {
   id: number; badge: string; badgeType: string; brand: string; name: string;
   emoji: string; rating: number; reviewCount: number; price: string;
   originalPrice: string; savings: string; tags: string[]; categories: string[];
+  description: string; image: string;
 }
 
 const inputStyle: React.CSSProperties = {
@@ -19,7 +20,7 @@ export default function AdminProductsPage() {
   const [form, setForm] = useState({
     badge: "", badgeType: "best", brand: "", name: "", emoji: "🌿",
     rating: "4.5", reviewCount: "100", price: "", originalPrice: "", savings: "",
-    tags: "", categories: "electric",
+    tags: "", categories: "electric", description: "", image: "",
   });
 
   const fetch_ = async () => {
@@ -44,7 +45,7 @@ export default function AdminProductsPage() {
       }),
     });
     await fetch_();
-    setForm({ badge: "", badgeType: "best", brand: "", name: "", emoji: "🌿", rating: "4.5", reviewCount: "100", price: "", originalPrice: "", savings: "", tags: "", categories: "electric" });
+    setForm({ badge: "", badgeType: "best", brand: "", name: "", emoji: "🌿", rating: "4.5", reviewCount: "100", price: "", originalPrice: "", savings: "", tags: "", categories: "electric", description: "", image: "" });
   };
 
   const handleDelete = async (id: number) => {
@@ -85,6 +86,8 @@ export default function AdminProductsPage() {
             <input placeholder="Savings (e.g. Save $100)" value={form.savings} onChange={e => setForm(f => ({...f, savings: e.target.value}))} style={inputStyle} required />
             <input placeholder="Tags (comma-separated)" value={form.tags} onChange={e => setForm(f => ({...f, tags: e.target.value}))} style={inputStyle} />
             <input placeholder="Categories (e.g. electric,under500)" value={form.categories} onChange={e => setForm(f => ({...f, categories: e.target.value}))} style={inputStyle} />
+            <input placeholder="Image URL" value={form.image} onChange={e => setForm(f => ({...f, image: e.target.value}))} style={{...inputStyle, gridColumn: "1 / -1"}} />
+            <textarea placeholder="Description" value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} style={{...inputStyle, gridColumn: "1 / -1", minHeight: 70, resize: "vertical"}} />
             <button type="submit" style={{ background: "var(--green)", color: "white", border: "none", borderRadius: 6, padding: "9px 20px", fontWeight: 600, fontSize: "0.9rem", cursor: "pointer", gridColumn: "1 / -1", justifySelf: "start" }}>
               Add Product
             </button>

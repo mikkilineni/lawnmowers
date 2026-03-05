@@ -21,6 +21,8 @@ model Product {
   savings       String
   tags          String
   categories    String
+  description   String   @default("")
+  image         String   @default("")
   createdAt     DateTime @default(now())
 }
 

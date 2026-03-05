@@ -18,6 +18,8 @@ export interface ProductRow {
   savings: string;
   tags: string[];
   categories: string[];
+  description?: string;
+  image?: string;
 }
 
 const FILTERS = [
@@ -134,14 +136,36 @@ export function Products({ products }: { products: ProductRow[] }) {
               {/* Image area */}
               <div style={{
                 background: "linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%)",
-                height: 180,
+                height: 200,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 fontSize: "5rem",
                 position: "relative",
+                overflow: "hidden",
               }}>
-                {p.emoji}
+                {p.image ? (
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    onError={e => {
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                      (e.currentTarget.nextSibling as HTMLElement).style.display = "flex";
+                    }}
+                  />
+                ) : null}
+                <div style={{
+                  display: p.image ? "none" : "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  height: "100%",
+                  position: p.image ? "absolute" : "relative",
+                  inset: 0,
+                }}>
+                  {p.emoji}
+                </div>
                 <div style={{
                   position: "absolute", top: 12, left: 12,
                   background: badge.bg,
@@ -150,7 +174,8 @@ export function Products({ products }: { products: ProductRow[] }) {
                   borderRadius: 6,
                   fontSize: "0.72rem",
                   fontWeight: 700,
-                  backdropFilter: "blur(4px)",
+                  backdropFilter: "blur(8px)",
+                  backgroundColor: badge.bg,
                 }}>
                   {p.badge}
                 </div>
@@ -159,7 +184,13 @@ export function Products({ products }: { products: ProductRow[] }) {
               {/* Body */}
               <div style={{ padding: "1.25rem" }}>
                 <div style={{ color: "var(--muted)", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.1em", marginBottom: 4 }}>{p.brand}</div>
-                <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.1rem", color: "var(--dark)", marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.name}</div>
+                <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.1rem", color: "var(--dark)", marginBottom: "0.5rem", lineHeight: 1.3 }}>{p.name}</div>
+
+                {p.description && (
+                  <div style={{ color: "var(--muted)", fontSize: "0.78rem", lineHeight: 1.6, marginBottom: "0.75rem", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    {p.description}
+                  </div>
+                )}
 
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: "0.75rem" }}>
                   <Stars rating={p.rating} />
