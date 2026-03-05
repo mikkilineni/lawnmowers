@@ -1,53 +1,63 @@
 -- CreateTable
 CREATE TABLE "Product" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "badge" TEXT NOT NULL,
     "badgeType" TEXT NOT NULL,
     "brand" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "emoji" TEXT NOT NULL DEFAULT '🌿',
-    "rating" REAL NOT NULL,
+    "rating" DOUBLE PRECISION NOT NULL,
     "reviewCount" INTEGER NOT NULL,
     "price" TEXT NOT NULL,
     "originalPrice" TEXT NOT NULL,
     "savings" TEXT NOT NULL,
     "tags" TEXT NOT NULL,
     "categories" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Category" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "emoji" TEXT NOT NULL,
     "price" TEXT NOT NULL,
-    "slug" TEXT NOT NULL
+    "slug" TEXT NOT NULL,
+
+    CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Review" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "text" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "location" TEXT NOT NULL,
-    "initial" TEXT NOT NULL
+    "initial" TEXT NOT NULL,
+
+    CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Guide" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "emoji" TEXT NOT NULL,
     "tag" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "readTime" TEXT NOT NULL,
-    "updated" TEXT NOT NULL
+    "updated" TEXT NOT NULL,
+
+    CONSTRAINT "Guide_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Brand" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "Brand_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
