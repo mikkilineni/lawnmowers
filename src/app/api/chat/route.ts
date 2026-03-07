@@ -47,7 +47,7 @@ Example: <rec>{"ids":[3,7,12]}</rec>
 Only include this tag when you have specific product recommendations. Keep responses concise and friendly.`;
 
   const response = await client.messages.create({
-    model: "claude-opus-4-6",
+    model: "claude-haiku-4-5",
     max_tokens: 1024,
     system: systemPrompt,
     messages,
