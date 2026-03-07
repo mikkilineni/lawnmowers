@@ -6,15 +6,17 @@ import { seedIfEmpty } from "@/lib/seed";
 
 export default async function AdminPage() {
   await seedIfEmpty();
-  const [products, reviews, guides, categories] = await Promise.all([
+  const [products, reviews, guides, categories, affiliateLinks] = await Promise.all([
     prisma.product.count(),
     prisma.review.count(),
     prisma.guide.count(),
     prisma.category.count(),
+    prisma.affiliateLink.count(),
   ]);
 
   const cards = [
     { label: "Products", count: products, href: "/admin/products", emoji: "🌿" },
+    { label: "Affiliate Links", count: affiliateLinks, href: "/admin/affiliate-links", emoji: "🔗" },
     { label: "Reviews", count: reviews, href: "/admin/reviews", emoji: "⭐" },
     { label: "Guides", count: guides, href: "/admin/guides", emoji: "📖" },
     { label: "Categories", count: categories, href: "/admin/categories", emoji: "📂" },

@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
 
-  const products = await prisma.product.findMany({ orderBy: { id: "asc" } });
+  const products = await prisma.product.findMany({ orderBy: { id: "asc" }, include: { affiliateLinks: true } });
 
   const filtered = category && category !== "all"
     ? products.filter((p) => {

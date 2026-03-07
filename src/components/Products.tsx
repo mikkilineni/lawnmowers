@@ -1,8 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type BadgeType = "best" | "popular" | "new" | "sale";
+
+export interface AffiliateLink {
+  id: number;
+  retailer: string;
+  url: string;
+  price: string;
+}
 
 export interface ProductRow {
   id: number;
@@ -20,6 +27,7 @@ export interface ProductRow {
   categories: string[];
   description?: string;
   image?: string;
+  affiliateLinks?: AffiliateLink[];
 }
 
 const FILTERS = [
@@ -43,6 +51,98 @@ function Stars({ rating }: { rating: number }) {
     <span style={{ color: "#fbbf24" }}>
       {"★".repeat(Math.round(rating))}{"☆".repeat(5 - Math.round(rating))}
     </span>
+  );
+}
+
+function BuyButton({ links }: { links: AffiliateLink[] }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  if (links.length === 0) {
+    return (
+      <button disabled style={{
+        background: "#e5e7eb", color: "#9ca3af", border: "none",
+        padding: "10px 20px", borderRadius: 8, fontWeight: 600,
+        fontSize: "0.85rem", cursor: "not-allowed",
+      }}>
+        Buy Now
+      </button>
+    );
+  }
+
+  if (links.length === 1) {
+    return (
+      <a href={links[0].url} target="_blank" rel="sponsored noopener noreferrer" style={{
+        background: "var(--green)", color: "var(--white)", border: "none",
+        padding: "10px 20px", borderRadius: 8, fontWeight: 600,
+        fontSize: "0.85rem", cursor: "pointer", textDecoration: "none",
+        display: "inline-block", transition: "background 0.2s",
+      }}
+        onMouseEnter={e => (e.currentTarget.style.background = "var(--green-mid)")}
+        onMouseLeave={e => (e.currentTarget.style.background = "var(--green)")}
+      >
+        Buy at {links[0].retailer}
+      </a>
+    );
+  }
+
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button onClick={() => setOpen(o => !o)} style={{
+        background: "var(--green)", color: "var(--white)", border: "none",
+        padding: "10px 20px", borderRadius: 8, fontWeight: 600,
+        fontSize: "0.85rem", cursor: "pointer", transition: "background 0.2s",
+        display: "flex", alignItems: "center", gap: 6,
+      }}
+        onMouseEnter={e => (e.currentTarget.style.background = "var(--green-mid)")}
+        onMouseLeave={e => (e.currentTarget.style.background = "var(--green)")}
+      >
+        Buy Now
+        <span style={{ fontSize: "0.65rem", opacity: 0.85 }}>{open ? "▲" : "▼"}</span>
+      </button>
+
+      {open && (
+        <div style={{
+          position: "absolute", bottom: "calc(100% + 8px)", right: 0,
+          background: "white", borderRadius: 10, boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+          overflow: "hidden", minWidth: 200, zIndex: 50,
+          border: "1px solid rgba(0,0,0,0.06)",
+        }}>
+          <div style={{ padding: "8px 14px 6px", fontSize: "0.68rem", fontWeight: 700, color: "var(--muted)", letterSpacing: "0.1em", textTransform: "uppercase", borderBottom: "1px solid #f0ede8" }}>
+            Compare Prices
+          </div>
+          {links.map(link => (
+            <a key={link.id} href={link.url} target="_blank" rel="sponsored noopener noreferrer"
+              onClick={() => setOpen(false)}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "10px 14px", textDecoration: "none", color: "var(--dark)",
+                fontSize: "0.85rem", fontWeight: 500, transition: "background 0.15s",
+                gap: 12,
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = "var(--cream)")}
+              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+            >
+              <span>{link.retailer}</span>
+              {link.price && (
+                <span style={{ color: "var(--green)", fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem" }}>
+                  {link.price}
+                </span>
+              )}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -122,6 +222,7 @@ export function Products({ products }: { products: ProductRow[] }) {
       }}>
         {visible.map(p => {
           const badge = BADGE_COLORS[p.badgeType];
+          const links = p.affiliateLinks ?? [];
           return (
             <div key={p.id} style={{
               background: "var(--white)",
@@ -220,22 +321,7 @@ export function Products({ products }: { products: ProductRow[] }) {
                     <span style={{ color: "var(--muted)", textDecoration: "line-through", marginLeft: 6, fontSize: "0.85rem" }}>{p.originalPrice}</span>
                     <div style={{ color: "var(--green)", fontSize: "0.72rem", fontWeight: 600 }}>{p.savings}</div>
                   </div>
-                  <button style={{
-                    background: "var(--green)",
-                    color: "var(--white)",
-                    border: "none",
-                    padding: "10px 20px",
-                    borderRadius: 8,
-                    fontWeight: 600,
-                    fontSize: "0.85rem",
-                    cursor: "pointer",
-                    transition: "background 0.2s",
-                  }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "var(--green-mid)")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "var(--green)")}
-                  >
-                    Buy Now
-                  </button>
+                  <BuyButton links={links} />
                 </div>
               </div>
             </div>

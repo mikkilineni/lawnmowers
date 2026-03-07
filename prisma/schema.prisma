@@ -8,22 +8,33 @@ datasource db {
 }
 
 model Product {
-  id            Int      @id @default(autoincrement())
-  badge         String
-  badgeType     String
-  brand         String
-  name          String
-  emoji         String   @default("🌿")
-  rating        Float
-  reviewCount   Int
-  price         String
-  originalPrice String
-  savings       String
-  tags          String
-  categories    String
-  description   String   @default("")
-  image         String   @default("")
-  createdAt     DateTime @default(now())
+  id             Int             @id @default(autoincrement())
+  badge          String
+  badgeType      String
+  brand          String
+  name           String
+  emoji          String          @default("🌿")
+  rating         Float
+  reviewCount    Int
+  price          String
+  originalPrice  String
+  savings        String
+  tags           String
+  categories     String
+  description    String          @default("")
+  image          String          @default("")
+  createdAt      DateTime        @default(now())
+  affiliateLinks AffiliateLink[]
+}
+
+model AffiliateLink {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  retailer  String
+  url       String
+  price     String   @default("")
+  createdAt DateTime @default(now())
 }
 
 model Category {
