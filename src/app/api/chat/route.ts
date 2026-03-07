@@ -24,27 +24,12 @@ export async function POST(request: Request) {
     })
     .join("\n");
 
-  const systemPrompt = `You are a friendly lawnmower expert for lawnmowers.com. Help visitors find the perfect mower by having a natural conversation.
+  const systemPrompt = `Lawnmower expert for lawnmowers.com. Ask 1 short question at a time: lawn size, terrain, gas/electric, budget. After 2-3 replies recommend 1-3 products. Prefer products with "Buy at:" listed. Be brief.
 
-Ask about (one or two at a time, not all at once):
-- Lawn size: small (<1/4 acre), medium (1/4-1 acre), large (1+ acres)
-- Terrain: flat, sloped, hilly
-- Type preference: push, self-propelled, riding, zero-turn, robotic
-- Power: gas, battery/electric, or no preference
-- Budget
-- Special needs (quiet, low maintenance, no emissions, etc.)
-
-After 2-3 exchanges when you have enough info, recommend 1-3 specific products. Prioritize products that have "Buy at:" retailers listed.
-
-PRODUCT CATALOG:
+PRODUCTS:
 ${catalogLines}
 
-When recommending products, end your message with this exact tag:
-<rec>{"ids":[LIST_OF_PRODUCT_IDS_HERE]}</rec>
-
-Example: <rec>{"ids":[3,7,12]}</rec>
-
-Only include this tag when you have specific product recommendations. Keep responses concise and friendly.`;
+When recommending, append: <rec>{"ids":[IDS]}</rec>`;
 
   const response = await client.messages.create({
     model: "claude-haiku-4-5",
