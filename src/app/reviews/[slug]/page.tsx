@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
+import { RelatedProducts } from "@/components/RelatedProducts";
+import { ReviewBuyButtons } from "@/components/ReviewBuyButtons";
 
 export const dynamic = "force-dynamic";
 
@@ -39,22 +41,28 @@ export default async function ReviewPage({ params }: Props) {
   const pros: string[] = product.pros ? product.pros.split("\n").filter(Boolean) : [];
   const cons: string[] = product.cons ? product.cons.split("\n").filter(Boolean) : [];
 
-  // Related products: same category or tag, excluding this product
   const allProducts = await prisma.product.findMany({
     where: { id: { not: product.id } },
-    include: { affiliateLinks: true },
   });
 
   const related = allProducts
     .filter(p => {
       const pCats: string[] = JSON.parse(p.categories);
       const pTags: string[] = JSON.parse(p.tags);
-      return (
-        pCats.some(c => categories.includes(c)) ||
-        pTags.some(t => tags.includes(t))
-      );
+      return pCats.some(c => categories.includes(c)) || pTags.some(t => tags.includes(t));
     })
-    .slice(0, 3);
+    .slice(0, 3)
+    .map(p => ({
+      id: p.id,
+      slug: p.slug,
+      badge: p.badge,
+      badgeType: p.badgeType,
+      brand: p.brand,
+      name: p.name,
+      emoji: p.emoji,
+      price: p.price,
+      image: p.image,
+    }));
 
   const badgeColors: Record<string, { bg: string; color: string }> = {
     best:    { bg: "rgba(168,216,50,0.15)", color: "#5a9e2f" },
@@ -95,10 +103,8 @@ export default async function ReviewPage({ params }: Props) {
       <main style={{ padding: "0 7% 5rem" }}>
 
         {/* Hero */}
-        <div style={{
-          display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3rem",
-          alignItems: "start", marginBottom: "3rem",
-        }} className="review-hero">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3rem", alignItems: "start", marginBottom: "3rem" }} className="review-hero">
+
           {/* Image */}
           <div style={{
             background: "linear-gradient(135deg, #1a6b2a 0%, #5a9e2f 100%)",
@@ -115,8 +121,7 @@ export default async function ReviewPage({ params }: Props) {
               position: "absolute", top: 16, left: 16,
               background: badge.bg, color: badge.color,
               padding: "5px 12px", borderRadius: 6,
-              fontSize: "0.78rem", fontWeight: 700,
-              backdropFilter: "blur(8px)",
+              fontSize: "0.78rem", fontWeight: 700, backdropFilter: "blur(8px)",
             }}>
               {product.badge}
             </div>
@@ -136,7 +141,6 @@ export default async function ReviewPage({ params }: Props) {
               {product.name}
             </h1>
 
-            {/* Rating */}
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
               <span style={{ color: "#fbbf24", fontSize: "1.2rem" }}>
                 {"★".repeat(Math.round(product.rating))}{"☆".repeat(5 - Math.round(product.rating))}
@@ -145,7 +149,6 @@ export default async function ReviewPage({ params }: Props) {
               <span style={{ color: "var(--muted, #8b8680)", fontSize: "0.85rem" }}>({product.reviewCount.toLocaleString()} reviews)</span>
             </div>
 
-            {/* Price */}
             <div style={{ marginBottom: "1.5rem" }}>
               <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.2rem", color: "var(--dark, #1c2e0e)" }}>{product.price}</span>
               {product.originalPrice && (
@@ -156,7 +159,6 @@ export default async function ReviewPage({ params }: Props) {
               )}
             </div>
 
-            {/* Tags */}
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: "1.5rem" }}>
               {tags.map(tag => (
                 <span key={tag} style={{
@@ -167,28 +169,7 @@ export default async function ReviewPage({ params }: Props) {
               ))}
             </div>
 
-            {/* Buy Buttons */}
-            {product.affiliateLinks.length > 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <div style={{ fontSize: "0.78rem", color: "var(--muted, #8b8680)", fontWeight: 600, letterSpacing: "0.08em" }}>WHERE TO BUY</div>
-                {product.affiliateLinks.map(link => (
-                  <a key={link.id} href={link.url} target="_blank" rel="sponsored noopener noreferrer"
-                    style={{
-                      display: "flex", alignItems: "center", justifyContent: "space-between",
-                      background: "#1a6b2a", color: "white",
-                      padding: "12px 20px", borderRadius: 10, textDecoration: "none",
-                      fontWeight: 600, fontSize: "0.9rem",
-                      transition: "background 0.2s",
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "#5a9e2f")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "#1a6b2a")}
-                  >
-                    <span>Buy at {link.retailer}</span>
-                    {link.price && <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.2rem" }}>{link.price}</span>}
-                  </a>
-                ))}
-              </div>
-            )}
+            <ReviewBuyButtons links={product.affiliateLinks} />
           </div>
         </div>
 
@@ -243,53 +224,8 @@ export default async function ReviewPage({ params }: Props) {
           </section>
         )}
 
-        {/* Related Products */}
-        {related.length > 0 && (
-          <section style={sectionStyle}>
-            <h2 style={sectionTitle}>Related Products</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "1.25rem" }}>
-              {related.map(p => {
-                const pTags: string[] = JSON.parse(p.tags);
-                const relBadge = badgeColors[p.badgeType] ?? badgeColors.best;
-                return (
-                  <Link key={p.id} href={`/reviews/${p.slug}`} style={{ textDecoration: "none" }}>
-                    <div style={{
-                      background: "white", borderRadius: 12, overflow: "hidden",
-                      boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-                      transition: "transform 0.2s, box-shadow 0.2s",
-                    }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 10px 28px rgba(0,0,0,0.12)"; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; }}
-                    >
-                      <div style={{
-                        background: "linear-gradient(135deg, #1a6b2a 0%, #5a9e2f 100%)",
-                        height: 140, display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: "4rem", position: "relative",
-                      }}>
-                        {p.image ? (
-                          <img src={p.image} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                        ) : (
-                          <span>{p.emoji}</span>
-                        )}
-                        <div style={{ position: "absolute", top: 10, left: 10, background: relBadge.bg, color: relBadge.color, padding: "3px 8px", borderRadius: 5, fontSize: "0.68rem", fontWeight: 700 }}>
-                          {p.badge}
-                        </div>
-                      </div>
-                      <div style={{ padding: "1rem" }}>
-                        <div style={{ color: "var(--muted, #8b8680)", fontSize: "0.72rem", fontWeight: 600, marginBottom: 3 }}>{p.brand}</div>
-                        <div style={{ fontWeight: 600, color: "var(--dark, #1c2e0e)", fontSize: "0.9rem", marginBottom: 6, lineHeight: 1.3 }}>{p.name}</div>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.2rem", color: "var(--dark, #1c2e0e)" }}>{p.price}</span>
-                          <span style={{ color: "#1a6b2a", fontSize: "0.78rem", fontWeight: 600 }}>Read Review →</span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-        )}
+        <RelatedProducts products={related} />
+
       </main>
 
       <style>{`
