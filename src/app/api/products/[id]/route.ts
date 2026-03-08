@@ -9,3 +9,16 @@ export async function DELETE(
   await prisma.product.delete({ where: { id: Number(id) } });
   return NextResponse.json({ deleted: true });
 }
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const body = await req.json();
+  const product = await prisma.product.update({
+    where: { id: Number(id) },
+    data: body,
+  });
+  return NextResponse.json(product);
+}
