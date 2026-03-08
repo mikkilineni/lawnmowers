@@ -1,6 +1,11 @@
 interface CategoryRow { id: number; name: string; emoji: string; price: string; slug: string; }
 
-export function Categories({ categories }: { categories: CategoryRow[] }) {
+interface CategoriesProps {
+  categories: CategoryRow[];
+  onCategoryClick: (slug: string) => void;
+}
+
+export function Categories({ categories, onCategoryClick }: CategoriesProps) {
   return (
     <section id="categories" style={{ background: "var(--white)", padding: "5rem 7%" }}>
       <div style={{ textAlign: "center", marginBottom: "3rem" }}>
@@ -14,15 +19,16 @@ export function Categories({ categories }: { categories: CategoryRow[] }) {
         gap: "1.25rem",
       }}>
         {categories.map(cat => (
-          <a key={cat.slug} href={`#products`} style={{
+          <button key={cat.slug} onClick={() => onCategoryClick(cat.slug)} style={{
             background: "var(--cream)",
             border: "2px solid transparent",
             borderRadius: 12,
             padding: "2rem 1.5rem",
             textAlign: "center",
-            textDecoration: "none",
             transition: "border-color 0.25s, transform 0.25s, box-shadow 0.25s",
             display: "block",
+            cursor: "pointer",
+            width: "100%",
           }}
             onMouseEnter={e => {
               e.currentTarget.style.borderColor = "var(--green)";
@@ -38,7 +44,7 @@ export function Categories({ categories }: { categories: CategoryRow[] }) {
             <div style={{ fontSize: "3rem", marginBottom: "0.75rem" }}>{cat.emoji}</div>
             <div style={{ fontWeight: 600, fontSize: "0.95rem", color: "var(--dark)", marginBottom: 4 }}>{cat.name}</div>
             <div style={{ color: "var(--muted)", fontSize: "0.8rem" }}>{cat.price}</div>
-          </a>
+          </button>
         ))}
       </div>
     </section>

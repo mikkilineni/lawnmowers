@@ -146,12 +146,23 @@ function BuyButton({ links }: { links: AffiliateLink[] }) {
   );
 }
 
-export function Products({ products }: { products: ProductRow[] }) {
+interface ProductsProps {
+  products: ProductRow[];
+  activeBrand?: string | null;
+  activeCategory?: string | null;
+  onClearFilter?: () => void;
+}
+
+export function Products({ products, activeBrand, activeCategory, onClearFilter }: ProductsProps) {
   const [active, setActive] = useState("all");
 
-  const visible = active === "all"
-    ? products
-    : products.filter(p => p.categories.includes(active));
+  const externalFilter = activeBrand ?? activeCategory ?? null;
+
+  const visible = (() => {
+    if (activeBrand) return products.filter(p => p.brand === activeBrand);
+    if (activeCategory) return products.filter(p => p.categories.includes(activeCategory));
+    return active === "all" ? products : products.filter(p => p.categories.includes(active));
+  })();
 
   return (
     <section id="products" className="section-pad" style={{ background: "var(--cream)", padding: "5rem 7%" }}>
@@ -165,6 +176,27 @@ export function Products({ products }: { products: ProductRow[] }) {
           View All 200+ Reviews →
         </a>
       </div>
+
+      {/* Active filter chip */}
+      {externalFilter && (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}>
+          <span style={{ fontSize: "0.82rem", color: "var(--muted)" }}>Showing results for:</span>
+          <span style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            background: "var(--green)", color: "white",
+            padding: "5px 12px", borderRadius: 20, fontSize: "0.82rem", fontWeight: 600,
+          }}>
+            {activeBrand ?? activeCategory}
+            <button onClick={onClearFilter} style={{
+              background: "none", border: "none", color: "white",
+              cursor: "pointer", fontSize: "1rem", lineHeight: 1, padding: 0, opacity: 0.8,
+            }}>×</button>
+          </span>
+          {visible.length === 0 && (
+            <span style={{ fontSize: "0.82rem", color: "var(--muted)" }}>— no products found</span>
+          )}
+        </div>
+      )}
 
       {/* Filter Bar */}
       <div className="filter-bar" style={{

@@ -1,4 +1,9 @@
-export function Brands({ brands }: { brands: string[] }) {
+interface BrandsProps {
+  brands: string[];
+  onBrandClick: (brand: string) => void;
+}
+
+export function Brands({ brands, onBrandClick }: BrandsProps) {
   return (
     <section style={{
       background: "var(--charcoal)",
@@ -13,17 +18,20 @@ export function Brands({ brands }: { brands: string[] }) {
       </span>
       <div style={{ display: "flex", gap: "2.5rem", flexWrap: "wrap", alignItems: "center" }}>
         {brands.map(b => (
-          <span key={b} style={{
+          <button key={b} onClick={() => onBrandClick(b)} style={{
             fontFamily: "'Bebas Neue', sans-serif",
             fontSize: "1.1rem",
             color: "rgba(255,255,255,0.35)",
             letterSpacing: "0.1em",
             transition: "color 0.2s",
-            cursor: "default",
+            cursor: "pointer",
+            background: "none",
+            border: "none",
+            padding: 0,
           }}
             onMouseEnter={e => (e.currentTarget.style.color = "var(--lime)")}
             onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.35)")}
-          >{b}</span>
+          >{b}</button>
         ))}
       </div>
     </section>

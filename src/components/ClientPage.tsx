@@ -23,15 +23,39 @@ interface Props {
 
 export function ClientPage({ products, categories, reviews, guides, brands }: Props) {
   const [quizOpen, setQuizOpen] = useState(false);
+  const [activeBrand, setActiveBrand] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const handleBrandClick = (brand: string) => {
+    setActiveBrand(brand);
+    setActiveCategory(null);
+    document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleCategoryClick = (slug: string) => {
+    setActiveCategory(slug);
+    setActiveBrand(null);
+    document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const clearFilter = () => {
+    setActiveBrand(null);
+    setActiveCategory(null);
+  };
 
   return (
     <>
       <Header onOpenQuiz={() => setQuizOpen(true)} />
       <Hero onOpenQuiz={() => setQuizOpen(true)} />
-      <Brands brands={brands} />
-      <Categories categories={categories} />
+      <Brands brands={brands} onBrandClick={handleBrandClick} />
+      <Categories categories={categories} onCategoryClick={handleCategoryClick} />
       <QuizBanner onOpenQuiz={() => setQuizOpen(true)} />
-      <Products products={products} />
+      <Products
+        products={products}
+        activeBrand={activeBrand}
+        activeCategory={activeCategory}
+        onClearFilter={clearFilter}
+      />
       <Reviews reviews={reviews} />
       <Guides guides={guides} />
       <Newsletter />
