@@ -27,14 +27,28 @@ export function Header({ onOpenQuiz }: HeaderProps) {
         height: 64,
         borderBottom: "1px solid rgba(168,216,50,0.15)",
       }}>
-        <a href="#top" style={{
-          fontFamily: "'Bebas Neue', sans-serif",
-          fontSize: "1.7rem",
-          color: "var(--lime)",
-          letterSpacing: 2,
-          textDecoration: "none",
-        }}>
-          Lawn<span style={{ color: "var(--white)" }}>mowers.com</span>
+        <a href="#top" style={{ textDecoration: "none", display: "flex", alignItems: "center" }} aria-label="Lawnmowers.com">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" height="36" role="img" aria-hidden="true">
+            {/* Icon */}
+            <rect x="0" y="4" width="56" height="56" rx="11" fill="#5a9e2f"/>
+            <rect x="9"  y="14" width="3" height="7"  rx="1.5" fill="#a8d832"/>
+            <rect x="15" y="12" width="3" height="9"  rx="1.5" fill="#a8d832"/>
+            <rect x="21" y="13" width="3" height="8"  rx="1.5" fill="#a8d832"/>
+            <rect x="27" y="12" width="3" height="9"  rx="1.5" fill="#a8d832"/>
+            <rect x="33" y="14" width="3" height="7"  rx="1.5" fill="#a8d832"/>
+            <rect x="7" y="20" width="32" height="11" rx="3" fill="white"/>
+            <circle cx="13" cy="36" r="6"   fill="white"/>
+            <circle cx="13" cy="36" r="2.4" fill="#5a9e2f"/>
+            <circle cx="34" cy="36" r="6"   fill="white"/>
+            <circle cx="34" cy="36" r="2.4" fill="#5a9e2f"/>
+            <line x1="39" y1="26" x2="52" y2="10" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
+            {/* Wordmark */}
+            <text x="70" y="47" fontFamily="'Bebas Neue', 'Arial Black', Arial, sans-serif" fontSize="38" letterSpacing="1">
+              <tspan fill="#a8d832">Lawn</tspan>
+              <tspan fill="white">mowers</tspan>
+              <tspan fill="#78be44" fontSize="28" dy="4">.com</tspan>
+            </text>
+          </svg>
         </a>
 
         {/* Desktop nav */}
