@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { seedIfEmpty } from "@/lib/seed";
+import { AdminHeader } from "@/components/AdminHeader";
 
 export default async function AdminPage() {
   await seedIfEmpty();
@@ -24,15 +25,7 @@ export default async function AdminPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--cream)", fontFamily: "'DM Sans', sans-serif" }}>
-      <header style={{ background: "var(--dark)", padding: "1.5rem 7%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div>
-          <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.5rem", color: "var(--lime)", letterSpacing: 2 }}>
-            Lawn<span style={{ color: "white" }}>mowers.com</span>
-          </div>
-          <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.72rem", letterSpacing: "0.12em" }}>ADMIN DASHBOARD</div>
-        </div>
-        <Link href="/" style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.82rem", textDecoration: "none" }}>← Back to Site</Link>
-      </header>
+      <AdminHeader />
 
       <main style={{ padding: "3rem 7%" }}>
         <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "var(--dark)", marginBottom: "2rem", letterSpacing: "0.02em" }}>

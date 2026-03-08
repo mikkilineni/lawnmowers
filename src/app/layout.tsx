@@ -3,6 +3,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { ChatWidget } from "@/components/ChatWidget";
 import { SubscribePopup } from "@/components/SubscribePopup";
 import { SocialSidebar } from "@/components/SocialSidebar";
+import { SessionProvider } from "@/components/SessionProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,10 +15,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        {children}
-        <ChatWidget />
-        <SubscribePopup />
-        <SocialSidebar />
+        <SessionProvider>
+          {children}
+          <ChatWidget />
+          <SubscribePopup />
+          <SocialSidebar />
+        </SessionProvider>
       </body>
       {process.env.NEXT_PUBLIC_GA_ID && (
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
