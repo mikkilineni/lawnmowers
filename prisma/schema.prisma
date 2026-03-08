@@ -9,6 +9,7 @@ datasource db {
 
 model Product {
   id             Int             @id @default(autoincrement())
+  slug           String          @unique @default("")
   badge          String
   badgeType      String
   brand          String
@@ -23,6 +24,9 @@ model Product {
   categories     String
   description    String          @default("")
   image          String          @default("")
+  pros           String          @default("")
+  cons           String          @default("")
+  review         String          @default("")
   createdAt      DateTime        @default(now())
   affiliateLinks AffiliateLink[]
 }

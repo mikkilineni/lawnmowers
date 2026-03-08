@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 
 type BadgeType = "best" | "popular" | "new" | "sale";
 
@@ -13,6 +14,7 @@ export interface AffiliateLink {
 
 export interface ProductRow {
   id: number;
+  slug: string;
   badge: string;
   badgeType: string;
   brand: string;
@@ -355,6 +357,19 @@ export function Products({ products, activeBrand, activeCategory, onClearFilter 
                   </div>
                   <BuyButton links={links} />
                 </div>
+                {p.slug && (
+                  <Link href={`/reviews/${p.slug}`} style={{
+                    display: "block", textAlign: "center",
+                    marginTop: "0.75rem",
+                    color: "var(--green)", fontSize: "0.82rem", fontWeight: 600,
+                    textDecoration: "none",
+                  }}
+                    onMouseEnter={e => (e.currentTarget.style.textDecoration = "underline")}
+                    onMouseLeave={e => (e.currentTarget.style.textDecoration = "none")}
+                  >
+                    Read Full Review →
+                  </Link>
+                )}
               </div>
             </div>
           );

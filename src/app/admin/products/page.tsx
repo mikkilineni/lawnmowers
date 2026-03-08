@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 interface Product {
-  id: number; badge: string; badgeType: string; brand: string; name: string;
+  id: number; slug: string; badge: string; badgeType: string; brand: string; name: string;
   emoji: string; rating: number; reviewCount: number; price: string;
   originalPrice: string; savings: string; tags: string[]; categories: string[];
-  description: string; image: string;
+  description: string; image: string; pros: string; cons: string; review: string;
 }
 
 const inputStyle: React.CSSProperties = {
@@ -21,6 +21,7 @@ export default function AdminProductsPage() {
     badge: "", badgeType: "best", brand: "", name: "", emoji: "🌿",
     rating: "4.5", reviewCount: "100", price: "", originalPrice: "", savings: "",
     tags: "", categories: "electric", description: "", image: "",
+    slug: "", pros: "", cons: "", review: "",
   });
 
   const fetch_ = async () => {
@@ -45,7 +46,7 @@ export default function AdminProductsPage() {
       }),
     });
     await fetch_();
-    setForm({ badge: "", badgeType: "best", brand: "", name: "", emoji: "🌿", rating: "4.5", reviewCount: "100", price: "", originalPrice: "", savings: "", tags: "", categories: "electric", description: "", image: "" });
+    setForm({ badge: "", badgeType: "best", brand: "", name: "", emoji: "🌿", rating: "4.5", reviewCount: "100", price: "", originalPrice: "", savings: "", tags: "", categories: "electric", description: "", image: "", slug: "", pros: "", cons: "", review: "" });
   };
 
   const handleDelete = async (id: number) => {
@@ -87,7 +88,11 @@ export default function AdminProductsPage() {
             <input placeholder="Tags (comma-separated)" value={form.tags} onChange={e => setForm(f => ({...f, tags: e.target.value}))} style={inputStyle} />
             <input placeholder="Categories (e.g. electric,under500)" value={form.categories} onChange={e => setForm(f => ({...f, categories: e.target.value}))} style={inputStyle} />
             <input placeholder="Image URL" value={form.image} onChange={e => setForm(f => ({...f, image: e.target.value}))} style={{...inputStyle, gridColumn: "1 / -1"}} />
+            <input placeholder="SEO Slug (e.g. honda-hrx217-review)" value={form.slug} onChange={e => setForm(f => ({...f, slug: e.target.value}))} style={{...inputStyle, gridColumn: "1 / -1"}} />
             <textarea placeholder="Description" value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} style={{...inputStyle, gridColumn: "1 / -1", minHeight: 70, resize: "vertical"}} />
+            <textarea placeholder="Full Review (paragraphs separated by blank lines)" value={form.review} onChange={e => setForm(f => ({...f, review: e.target.value}))} style={{...inputStyle, gridColumn: "1 / -1", minHeight: 120, resize: "vertical"}} />
+            <textarea placeholder="Pros (one per line)" value={form.pros} onChange={e => setForm(f => ({...f, pros: e.target.value}))} style={{...inputStyle, minHeight: 80, resize: "vertical"}} />
+            <textarea placeholder="Cons (one per line)" value={form.cons} onChange={e => setForm(f => ({...f, cons: e.target.value}))} style={{...inputStyle, minHeight: 80, resize: "vertical"}} />
             <button type="submit" style={{ background: "var(--green)", color: "white", border: "none", borderRadius: 6, padding: "9px 20px", fontWeight: 600, fontSize: "0.9rem", cursor: "pointer", gridColumn: "1 / -1", justifySelf: "start" }}>
               Add Product
             </button>
@@ -102,7 +107,7 @@ export default function AdminProductsPage() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
             <thead>
               <tr style={{ borderBottom: "2px solid var(--cream)" }}>
-                {["", "Brand", "Name", "Price", "Rating", "Categories", ""].map(h => (
+                {["", "Brand", "Name", "Price", "Rating", "Slug", ""].map(h => (
                   <th key={h} style={{ padding: "8px 12px", textAlign: "left", color: "var(--muted)", fontWeight: 600, fontSize: "0.72rem", letterSpacing: "0.08em" }}>{h}</th>
                 ))}
               </tr>
@@ -115,8 +120,13 @@ export default function AdminProductsPage() {
                   <td style={{ padding: "10px 12px", fontWeight: 600, color: "var(--dark)" }}>{p.name}</td>
                   <td style={{ padding: "10px 12px", color: "var(--green)", fontWeight: 600 }}>{p.price}</td>
                   <td style={{ padding: "10px 12px" }}>★ {p.rating}</td>
-                  <td style={{ padding: "10px 12px", color: "var(--muted)", fontSize: "0.78rem" }}>{p.categories.join(", ")}</td>
-                  <td style={{ padding: "10px 12px" }}>
+                  <td style={{ padding: "10px 12px", color: "var(--muted)", fontSize: "0.72rem", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.slug}</td>
+                  <td style={{ padding: "10px 12px", display: "flex", gap: 6 }}>
+                    {p.slug && (
+                      <a href={`/reviews/${p.slug}`} target="_blank" style={{ background: "none", border: "1px solid #ddd", borderRadius: 6, padding: "4px 10px", cursor: "pointer", color: "var(--green)", fontSize: "0.78rem", textDecoration: "none" }}>
+                        View
+                      </a>
+                    )}
                     <button onClick={() => handleDelete(p.id)} style={{ background: "none", border: "1px solid #ddd", borderRadius: 6, padding: "4px 10px", cursor: "pointer", color: "#ef4444", fontSize: "0.78rem" }}>
                       Delete
                     </button>
