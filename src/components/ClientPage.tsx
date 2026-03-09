@@ -19,9 +19,10 @@ interface Props {
   reviews: { id: number; text: string; name: string; location: string; initial: string }[];
   guides: { id: number; emoji: string; tag: string; title: string; readTime: string; updated: string }[];
   brands: string[];
+  adsEnabled?: boolean;
 }
 
-export function ClientPage({ products, categories, reviews, guides, brands }: Props) {
+export function ClientPage({ products, categories, reviews, guides, brands, adsEnabled }: Props) {
   const [quizOpen, setQuizOpen] = useState(false);
   const [activeBrand, setActiveBrand] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -55,6 +56,7 @@ export function ClientPage({ products, categories, reviews, guides, brands }: Pr
         activeBrand={activeBrand}
         activeCategory={activeCategory}
         onClearFilter={clearFilter}
+        adsEnabled={adsEnabled}
       />
       <Reviews reviews={reviews} />
       <Guides guides={guides} />

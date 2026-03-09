@@ -7,13 +7,15 @@ import prisma from "@/lib/prisma";
 export default async function HomePage() {
   await seedIfEmpty();
 
-  const [products, categories, reviews, guides, brands] = await Promise.all([
+  const [products, categories, reviews, guides, brands, adsSetting] = await Promise.all([
     prisma.product.findMany({ orderBy: { id: "asc" }, include: { affiliateLinks: true } }),
     prisma.category.findMany({ orderBy: { id: "asc" } }),
     prisma.review.findMany({ orderBy: { id: "asc" } }),
     prisma.guide.findMany({ orderBy: { id: "asc" } }),
     prisma.brand.findMany({ orderBy: { name: "asc" } }),
+    prisma.setting.findUnique({ where: { key: "adsEnabled" } }),
   ]);
+  const adsEnabled = adsSetting?.value === "true";
 
   return (
     <ClientPage
@@ -26,6 +28,7 @@ export default async function HomePage() {
       reviews={reviews}
       guides={guides}
       brands={brands.map((b) => b.name)}
+      adsEnabled={adsEnabled}
     />
   );
 }

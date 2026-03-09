@@ -153,9 +153,33 @@ interface ProductsProps {
   activeBrand?: string | null;
   activeCategory?: string | null;
   onClearFilter?: () => void;
+  adsEnabled?: boolean;
 }
 
-export function Products({ products, activeBrand, activeCategory, onClearFilter }: ProductsProps) {
+function AdCard() {
+  return (
+    <div style={{
+      background: "var(--white)", borderRadius: 12, overflow: "hidden",
+      boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      minHeight: 300, border: "2px dashed #e5e1db",
+      flexDirection: "column", gap: 8, color: "var(--muted)",
+    }}>
+      {/* Replace data-ad-client and data-ad-slot with your real AdSense values */}
+      <div style={{ fontSize: "0.72rem", letterSpacing: "0.1em", fontWeight: 600 }}>ADVERTISEMENT</div>
+      <ins
+        className="adsbygoogle"
+        style={{ display: "block", width: "100%", minHeight: 250 }}
+        data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+        data-ad-slot="XXXXXXXXXX"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+    </div>
+  );
+}
+
+export function Products({ products, activeBrand, activeCategory, onClearFilter, adsEnabled }: ProductsProps) {
   const [active, setActive] = useState("all");
 
   const externalFilter = activeBrand ?? activeCategory ?? null;
@@ -254,7 +278,19 @@ export function Products({ products, activeBrand, activeCategory, onClearFilter 
         gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
         gap: "1.5rem",
       }}>
-        {visible.map(p => {
+        {visible.flatMap((p, i) => {
+          const showAd = adsEnabled && i > 0 && i % 4 === 3;
+          const items = [];
+          if (showAd) items.push(<AdCard key={`ad-${i}`} />);
+          items.push(renderCard(p));
+          return items;
+        })}
+      </div>
+    </section>
+  );
+}
+
+function renderCard(p: ProductRow) {
           const badge = BADGE_COLORS[p.badgeType];
           const links = p.affiliateLinks ?? [];
           return (
@@ -373,10 +409,6 @@ export function Products({ products, activeBrand, activeCategory, onClearFilter 
               </div>
             </div>
           );
-        })}
-      </div>
-    </section>
-  );
 }
 
 const labelStyle: React.CSSProperties = {
