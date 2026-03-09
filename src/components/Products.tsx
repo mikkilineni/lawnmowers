@@ -171,7 +171,7 @@ function AdCard() {
       <ins
         className="adsbygoogle"
         style={{ display: "block", width: "100%", minHeight: 250 }}
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+        data-ad-client="ca-pub-9865114779201806"
         data-ad-slot="XXXXXXXXXX"
         data-ad-format="auto"
         data-full-width-responsive="true"
