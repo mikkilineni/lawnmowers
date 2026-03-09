@@ -50,64 +50,38 @@ export function SocialSidebar() {
 
   return (
     <>
-      {/* Desktop: fixed vertical sidebar */}
-      <div className="social-sidebar-desktop" style={{
-        position: "fixed",
-        right: 0,
-        top: "50%",
-        transform: "translateY(-50%)",
-        zIndex: 90,
-        display: "flex",
-        flexDirection: "column",
-        gap: 4,
-      }}>
-        {socials.map((s) => (
-          <a
-            key={s.name}
-            href={s.href}
-            aria-label={s.name}
-            title={s.name}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 44,
-              height: 44,
-              background: "rgba(14,26,15,0.92)",
-              color: "rgba(255,255,255,0.55)",
-              borderRadius: "8px 0 0 8px",
-              borderTop: "1px solid rgba(168,216,50,0.12)",
-              borderLeft: "1px solid rgba(168,216,50,0.12)",
-              borderBottom: "1px solid rgba(168,216,50,0.12)",
-              textDecoration: "none",
-              transition: "color 0.2s, background 0.2s",
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLAnchorElement).style.color = s.color;
-              (e.currentTarget as HTMLAnchorElement).style.background = "rgba(14,26,15,1)";
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.55)";
-              (e.currentTarget as HTMLAnchorElement).style.background = "rgba(14,26,15,0.92)";
-            }}
-          >
-            {s.icon}
-          </a>
-        ))}
-      </div>
+      <style>{`
+        .ss-wrap {
+          position: fixed;
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 90;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .ss-toggle { display: none; }
+        .ss-icons { display: flex; flex-direction: column; gap: 4px; }
+        @media (max-width: 768px) {
+          .ss-wrap {
+            top: auto;
+            bottom: 100px;
+            transform: none;
+            align-items: flex-end;
+          }
+          .ss-toggle { display: block; }
+          .ss-icons {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+          }
+        }
+      `}</style>
 
-      {/* Mobile: collapsed tab that expands */}
-      <div className="social-sidebar-mobile" style={{
-        position: "fixed",
-        right: 0,
-        bottom: 100,
-        zIndex: 90,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-end",
-      }}>
-        {/* Toggle tab */}
+      <div className="ss-wrap">
+        {/* Mobile-only toggle tab */}
         <button
+          className="ss-toggle"
           onClick={() => setExpanded(o => !o)}
           aria-label="Toggle social links"
           style={{
@@ -126,32 +100,39 @@ export function SocialSidebar() {
           {expanded ? "›" : "‹"}
         </button>
 
-        {/* Expandable icons */}
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 3,
-          overflow: "hidden",
-          maxHeight: expanded ? 300 : 0,
-          transition: "max-height 0.3s ease",
-        }}>
+        {/* Icons — always visible on desktop, toggle on mobile */}
+        <div
+          className="ss-icons"
+          style={{ maxHeight: expanded ? 300 : undefined }}
+        >
           {socials.map((s) => (
             <a
               key={s.name}
               href={s.href}
               aria-label={s.name}
+              title={s.name}
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: 40,
-                height: 40,
-                background: "rgba(14,26,15,0.95)",
-                color: s.color,
+                width: 44,
+                height: 44,
+                background: "rgba(14,26,15,0.92)",
+                color: "rgba(255,255,255,0.55)",
                 borderRadius: "8px 0 0 8px",
-                border: "1px solid rgba(168,216,50,0.15)",
-                borderRight: "none",
+                borderTop: "1px solid rgba(168,216,50,0.12)",
+                borderLeft: "1px solid rgba(168,216,50,0.12)",
+                borderBottom: "1px solid rgba(168,216,50,0.12)",
                 textDecoration: "none",
+                transition: "color 0.2s, background 0.2s",
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.color = s.color;
+                e.currentTarget.style.background = "rgba(14,26,15,1)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.color = "rgba(255,255,255,0.55)";
+                e.currentTarget.style.background = "rgba(14,26,15,0.92)";
               }}
             >
               {s.icon}
@@ -159,15 +140,6 @@ export function SocialSidebar() {
           ))}
         </div>
       </div>
-
-      <style>{`
-        .social-sidebar-mobile { display: none; }
-        .social-sidebar-desktop { display: flex; }
-        @media (max-width: 768px) {
-          .social-sidebar-desktop { display: none; }
-          .social-sidebar-mobile { display: flex; }
-        }
-      `}</style>
     </>
   );
 }
