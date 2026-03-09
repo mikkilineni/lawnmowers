@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ImportCSV } from "@/components/ImportCSV";
 
 interface Product {
   id: number; slug: string; badge: string; badgeType: string; brand: string; name: string;
@@ -146,6 +147,9 @@ export default function AdminProductsPage() {
       </header>
 
       <main style={{ padding: "2.5rem 7%", display: "flex", flexDirection: "column", gap: "2rem" }}>
+        {/* CSV Import */}
+        <ImportCSV onImported={fetch_} />
+
         {/* Add Form */}
         <div style={{ background: "white", borderRadius: 12, padding: "1.75rem", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
           <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", color: "var(--dark)", marginBottom: "1.25rem", letterSpacing: "0.02em" }}>
