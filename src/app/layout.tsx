@@ -9,6 +9,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Lawnmowers.com — Find Your Perfect Mower",
   description: "Expert reviews, honest comparisons, and buying guides for lawnmowers. Trusted by 2M+ homeowners.",
+  other: {
+    "fo-verify": "56e4352f-6a80-457e-9bd7-ed9e8a4d7fd9",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
