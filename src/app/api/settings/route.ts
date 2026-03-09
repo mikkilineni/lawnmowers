@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 
 const DEFAULTS: Record<string, string> = {
   adsEnabled: "false",
+  adFrequency: "4",
 };
 
 export async function GET() {

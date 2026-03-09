@@ -8,15 +8,17 @@ import { AdsToggle } from "@/components/AdsToggle";
 
 export default async function AdminPage() {
   await seedIfEmpty();
-  const [products, reviews, guides, categories, affiliateLinks, adsSetting] = await Promise.all([
+  const [products, reviews, guides, categories, affiliateLinks, adsSetting, freqSetting] = await Promise.all([
     prisma.product.count(),
     prisma.review.count(),
     prisma.guide.count(),
     prisma.category.count(),
     prisma.affiliateLink.count(),
     prisma.setting.findUnique({ where: { key: "adsEnabled" } }),
+    prisma.setting.findUnique({ where: { key: "adFrequency" } }),
   ]);
   const adsEnabled = adsSetting?.value === "true";
+  const adFrequency = parseInt(freqSetting?.value ?? "4", 10);
 
   const cards = [
     { label: "Products", count: products, href: "/admin/products", emoji: "🌿" },
@@ -39,7 +41,7 @@ export default async function AdminPage() {
           <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.3rem", color: "var(--dark)", marginBottom: "0.75rem", letterSpacing: "0.02em" }}>
             Site Settings
           </h2>
-          <AdsToggle initialValue={adsEnabled} />
+          <AdsToggle initialValue={adsEnabled} initialFrequency={adFrequency} />
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1.5rem" }}>

@@ -20,9 +20,10 @@ interface Props {
   guides: { id: number; emoji: string; tag: string; title: string; readTime: string; updated: string }[];
   brands: string[];
   adsEnabled?: boolean;
+  adFrequency?: number;
 }
 
-export function ClientPage({ products, categories, reviews, guides, brands, adsEnabled }: Props) {
+export function ClientPage({ products, categories, reviews, guides, brands, adsEnabled, adFrequency }: Props) {
   const [quizOpen, setQuizOpen] = useState(false);
   const [activeBrand, setActiveBrand] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -57,6 +58,7 @@ export function ClientPage({ products, categories, reviews, guides, brands, adsE
         activeCategory={activeCategory}
         onClearFilter={clearFilter}
         adsEnabled={adsEnabled}
+        adFrequency={adFrequency}
       />
       <Reviews reviews={reviews} />
       <Guides guides={guides} />

@@ -154,6 +154,7 @@ interface ProductsProps {
   activeCategory?: string | null;
   onClearFilter?: () => void;
   adsEnabled?: boolean;
+  adFrequency?: number;
 }
 
 function AdCard() {
@@ -179,7 +180,7 @@ function AdCard() {
   );
 }
 
-export function Products({ products, activeBrand, activeCategory, onClearFilter, adsEnabled }: ProductsProps) {
+export function Products({ products, activeBrand, activeCategory, onClearFilter, adsEnabled, adFrequency = 4 }: ProductsProps) {
   const [active, setActive] = useState("all");
 
   const externalFilter = activeBrand ?? activeCategory ?? null;
@@ -279,7 +280,7 @@ export function Products({ products, activeBrand, activeCategory, onClearFilter,
         gap: "1.5rem",
       }}>
         {visible.flatMap((p, i) => {
-          const showAd = adsEnabled && i > 0 && i % 4 === 3;
+          const showAd = adsEnabled && i > 0 && (i + 1) % adFrequency === 0;
           const items = [];
           if (showAd) items.push(<AdCard key={`ad-${i}`} />);
           items.push(renderCard(p));
