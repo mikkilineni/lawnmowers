@@ -27,6 +27,7 @@ model Product {
   pros           String          @default("")
   cons           String          @default("")
   review         String          @default("")
+  extrasJson     String          @default("{}")
   createdAt      DateTime        @default(now())
   affiliateLinks AffiliateLink[]
 }
