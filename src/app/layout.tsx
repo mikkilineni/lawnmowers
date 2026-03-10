@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   description: "Expert reviews, honest comparisons, and buying guides for lawnmowers. Trusted by 2M+ homeowners.",
   other: {
     "fo-verify": "56e4352f-6a80-457e-9bd7-ed9e8a4d7fd9",
+    "impact-site-verification": "e7b4e2ee-5b10-461e-b49a-75164a7c302b",
   },
 };
 
