@@ -17,9 +17,15 @@ export function Hero({ onOpenQuiz }: HeroProps) {
       padding: "0 7%",
       paddingTop: 64,
       gap: "4rem",
+      position: "relative",
+      overflow: "hidden",
     }}>
+      {/* Grain texture */}
+      <div className="hero-grain" aria-hidden="true" />
+      {/* Curved cream cutout at bottom */}
+      <div className="hero-wave" aria-hidden="true" />
       {/* Left */}
-      <div>
+      <div style={{ position: "relative", zIndex: 3 }}>
         <div className="fade-up" style={{
           display: "inline-flex", alignItems: "center", gap: 8,
           background: "rgba(168,216,50,0.12)",
@@ -114,7 +120,7 @@ export function Hero({ onOpenQuiz }: HeroProps) {
       </div>
 
       {/* Right — featured card (hidden on mobile) */}
-      <div className="hero-right" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+      <div className="hero-right" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 3 }}>
         <div style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: "clamp(5rem, 10vw, 9rem)",
@@ -125,7 +131,7 @@ export function Hero({ onOpenQuiz }: HeroProps) {
           userSelect: "none",
         }}>MOWER</div>
 
-        <div style={{
+        <div className="hero-float" style={{
           background: "rgba(255,255,255,0.05)",
           border: "1px solid rgba(168,216,50,0.2)",
           borderRadius: 16,
@@ -134,6 +140,7 @@ export function Hero({ onOpenQuiz }: HeroProps) {
           maxWidth: 380,
           backdropFilter: "blur(8px)",
           position: "relative",
+          boxShadow: "0 24px 64px rgba(0,0,0,0.4), 0 0 0 1px rgba(168,216,50,0.08)",
         }}>
           <div style={{
             position: "absolute", top: -14, right: 24,

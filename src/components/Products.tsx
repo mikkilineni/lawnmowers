@@ -295,19 +295,19 @@ function renderCard(p: ProductRow) {
           const badge = BADGE_COLORS[p.badgeType];
           const links = p.affiliateLinks ?? [];
           return (
-            <div key={p.id} style={{
+            <div key={p.id} className={p.badgeType ? `card-${p.badgeType}` : ""} style={{
               background: "var(--white)",
               borderRadius: 12,
               overflow: "hidden",
               boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
               transition: "transform 0.25s, box-shadow 0.25s",
             }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(0,0,0,0.12)"; }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(0,0,0,0.14)"; }}
               onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; }}
             >
               {/* Image area */}
               <div style={{
-                background: "linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%)",
+                background: "linear-gradient(145deg, #122b13 0%, var(--green) 50%, #2a6b1a 100%)",
                 height: 200,
                 display: "flex",
                 alignItems: "center",
@@ -316,6 +316,11 @@ function renderCard(p: ProductRow) {
                 position: "relative",
                 overflow: "hidden",
               }}>
+                {/* Subtle grid pattern overlay */}
+                <div aria-hidden="true" style={{
+                  position: "absolute", inset: 0, pointerEvents: "none",
+                  backgroundImage: "repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 32px), repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 32px)",
+                }} />
                 {p.image ? (
                   <img
                     src={p.image}

@@ -219,6 +219,7 @@ export function ChatWidget() {
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close chat" : "Open mower expert chat"}
+        className={!open ? "fab-pulse" : ""}
         style={{
           position: "fixed",
           bottom: 24,
