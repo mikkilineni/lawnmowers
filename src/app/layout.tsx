@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { ChatWidget } from "@/components/ChatWidget";
 import { SubscribePopup } from "@/components/SubscribePopup";
@@ -26,6 +27,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SocialSidebar />
         </SessionProvider>
       </body>
+      <Script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9865114779201806"
+        crossOrigin="anonymous"
+        strategy="afterInteractive"
+      />
       {process.env.NEXT_PUBLIC_GA_ID && (
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
       )}

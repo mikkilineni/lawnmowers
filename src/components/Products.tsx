@@ -158,21 +158,24 @@ interface ProductsProps {
 }
 
 function AdCard() {
+  useEffect(() => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+    } catch { /* already initialized */ }
+  }, []);
+
   return (
     <div style={{
       background: "var(--white)", borderRadius: 12, overflow: "hidden",
       boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      minHeight: 300, border: "2px dashed #e5e1db",
-      flexDirection: "column", gap: 8, color: "var(--muted)",
+      minHeight: 280,
     }}>
-      {/* Replace data-ad-client and data-ad-slot with your real AdSense values */}
-      <div style={{ fontSize: "0.72rem", letterSpacing: "0.1em", fontWeight: 600 }}>ADVERTISEMENT</div>
       <ins
         className="adsbygoogle"
         style={{ display: "block", width: "100%", minHeight: 250 }}
         data-ad-client="ca-pub-9865114779201806"
-        data-ad-slot="XXXXXXXXXX"
+        data-ad-slot="4322160719"
         data-ad-format="auto"
         data-full-width-responsive="true"
       />
