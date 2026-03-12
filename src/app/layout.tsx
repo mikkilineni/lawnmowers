@@ -26,16 +26,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SubscribePopup />
           <SocialSidebar />
         </SessionProvider>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9865114779201806"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
       </body>
-      <Script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9865114779201806"
-        crossOrigin="anonymous"
-        strategy="afterInteractive"
-      />
-      {process.env.NEXT_PUBLIC_GA_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-      )}
     </html>
   );
 }
