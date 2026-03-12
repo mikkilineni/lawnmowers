@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
+import { InArticleAd } from "@/components/InArticleAd";
 
 interface Extras {
   tagline?: string;
@@ -180,6 +181,8 @@ export default async function RoboticReviewPage({ params }: { params: Promise<{ 
               </div>
             </>
           )}
+
+          <InArticleAd />
 
           {/* Pros & Cons */}
           {(pros.length > 0 || cons.length > 0) && (

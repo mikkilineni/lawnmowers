@@ -4,6 +4,7 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { ReviewBuyButtons } from "@/components/ReviewBuyButtons";
+import { InArticleAd } from "@/components/InArticleAd";
 
 export const dynamic = "force-dynamic";
 
@@ -181,6 +182,8 @@ export default async function ReviewPage({ params }: Props) {
           </section>
         )}
 
+        <InArticleAd />
+
         {/* Full Review */}
         {product.review && (
           <section style={sectionStyle}>
@@ -190,6 +193,8 @@ export default async function ReviewPage({ params }: Props) {
             ))}
           </section>
         )}
+
+        <InArticleAd />
 
         {/* Pros & Cons */}
         {(pros.length > 0 || cons.length > 0) && (
