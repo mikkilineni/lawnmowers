@@ -6,10 +6,11 @@ import { seedIfEmpty } from "@/lib/seed";
 import { AdminHeader } from "@/components/AdminHeader";
 import { AdsToggle } from "@/components/AdsToggle";
 import { HotPickSelector } from "@/components/HotPickSelector";
+import { HeroAdToggle } from "@/components/HeroAdToggle";
 
 export default async function AdminPage() {
   await seedIfEmpty();
-  const [products, reviews, guides, categories, affiliateLinks, adsSetting, freqSetting, hotPickSetting, allProducts] = await Promise.all([
+  const [products, reviews, guides, categories, affiliateLinks, adsSetting, freqSetting, hotPickSetting, allProducts, heroAdEnabledSetting, heroAdSlotSetting] = await Promise.all([
     prisma.product.count(),
     prisma.review.count(),
     prisma.guide.count(),
@@ -19,10 +20,14 @@ export default async function AdminPage() {
     prisma.setting.findUnique({ where: { key: "adFrequency" } }),
     prisma.setting.findUnique({ where: { key: "hotPickProductId" } }),
     prisma.product.findMany({ orderBy: { id: "asc" }, include: { affiliateLinks: true } }),
+    prisma.setting.findUnique({ where: { key: "heroAdEnabled" } }),
+    prisma.setting.findUnique({ where: { key: "heroAdSlot" } }),
   ]);
   const adsEnabled = adsSetting?.value === "true";
   const adFrequency = parseInt(freqSetting?.value ?? "4", 10);
   const hotPickProductId = hotPickSetting?.value ? parseInt(hotPickSetting.value, 10) : null;
+  const heroAdEnabled = heroAdEnabledSetting?.value === "true";
+  const heroAdSlot = heroAdSlotSetting?.value ?? "";
 
   const cards = [
     { label: "Products", count: products, href: "/admin/products", emoji: "🌿" },
@@ -48,6 +53,9 @@ export default async function AdminPage() {
           <AdsToggle initialValue={adsEnabled} initialFrequency={adFrequency} />
           <div style={{ marginTop: "1rem" }}>
             <HotPickSelector products={allProducts} currentHotPickId={hotPickProductId} />
+          </div>
+          <div style={{ marginTop: "1rem" }}>
+            <HeroAdToggle initialEnabled={heroAdEnabled} initialSlot={heroAdSlot} />
           </div>
         </div>
 

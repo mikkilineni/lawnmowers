@@ -20,11 +20,15 @@ interface HotPickProduct {
 interface HeroProps {
   onOpenQuiz: () => void;
   hotPickProduct?: HotPickProduct | null;
+  heroAdEnabled?: boolean;
+  heroAdSlot?: string;
 }
 
 const PILLS = ["Gas", "Electric", "Battery", "Robotic", "Riding"];
 
-export function Hero({ onOpenQuiz, hotPickProduct }: HeroProps) {
+import { HeroAdUnit } from "./HeroAdUnit";
+
+export function Hero({ onOpenQuiz, hotPickProduct, heroAdEnabled, heroAdSlot }: HeroProps) {
   return (
     <section id="top" className="hero-section" style={{
       minHeight: "100vh",
@@ -229,6 +233,11 @@ export function Hero({ onOpenQuiz, hotPickProduct }: HeroProps) {
             </div>
           )}
         </div>
+        )}
+
+        {/* Hero Ad Unit */}
+        {heroAdEnabled && heroAdSlot && (
+          <HeroAdUnit slot={heroAdSlot} />
         )}
 
         {/* Category pills */}

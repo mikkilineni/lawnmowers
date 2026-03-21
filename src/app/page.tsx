@@ -7,7 +7,7 @@ import prisma from "@/lib/prisma";
 export default async function HomePage() {
   await seedIfEmpty();
 
-  const [products, categories, reviews, guides, brands, adsSetting, freqSetting, hotPickSetting] = await Promise.all([
+  const [products, categories, reviews, guides, brands, adsSetting, freqSetting, hotPickSetting, heroAdEnabledSetting, heroAdSlotSetting] = await Promise.all([
     prisma.product.findMany({ orderBy: { id: "asc" }, include: { affiliateLinks: true } }),
     prisma.category.findMany({ orderBy: { id: "asc" } }),
     prisma.review.findMany({ orderBy: { id: "asc" } }),
@@ -16,6 +16,8 @@ export default async function HomePage() {
     prisma.setting.findUnique({ where: { key: "adsEnabled" } }),
     prisma.setting.findUnique({ where: { key: "adFrequency" } }),
     prisma.setting.findUnique({ where: { key: "hotPickProductId" } }),
+    prisma.setting.findUnique({ where: { key: "heroAdEnabled" } }),
+    prisma.setting.findUnique({ where: { key: "heroAdSlot" } }),
   ]);
   const adsEnabled = adsSetting?.value === "true";
   const adFrequency = parseInt(freqSetting?.value ?? "4", 10);
@@ -23,6 +25,8 @@ export default async function HomePage() {
   const hotPickProduct = hotPickId
     ? products.find((p) => p.id === hotPickId) ?? products[0] ?? null
     : products[0] ?? null;
+  const heroAdEnabled = heroAdEnabledSetting?.value === "true";
+  const heroAdSlot = heroAdSlotSetting?.value ?? "";
 
   return (
     <ClientPage
@@ -38,6 +42,8 @@ export default async function HomePage() {
       adsEnabled={adsEnabled}
       adFrequency={adFrequency}
       hotPickProduct={hotPickProduct}
+      heroAdEnabled={heroAdEnabled}
+      heroAdSlot={heroAdSlot}
     />
   );
 }

@@ -32,9 +32,11 @@ interface Props {
   adsEnabled?: boolean;
   adFrequency?: number;
   hotPickProduct?: HotPickProduct | null;
+  heroAdEnabled?: boolean;
+  heroAdSlot?: string;
 }
 
-export function ClientPage({ products, categories, reviews, guides, brands, adsEnabled, adFrequency, hotPickProduct }: Props) {
+export function ClientPage({ products, categories, reviews, guides, brands, adsEnabled, adFrequency, hotPickProduct, heroAdEnabled, heroAdSlot }: Props) {
   const [quizOpen, setQuizOpen] = useState(false);
   const [activeBrand, setActiveBrand] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -59,7 +61,7 @@ export function ClientPage({ products, categories, reviews, guides, brands, adsE
   return (
     <>
       <Header onOpenQuiz={() => setQuizOpen(true)} />
-      <Hero onOpenQuiz={() => setQuizOpen(true)} hotPickProduct={hotPickProduct} />
+      <Hero onOpenQuiz={() => setQuizOpen(true)} hotPickProduct={hotPickProduct} heroAdEnabled={heroAdEnabled} heroAdSlot={heroAdSlot} />
       <Brands brands={brands} onBrandClick={handleBrandClick} />
       <Categories categories={categories} onCategoryClick={handleCategoryClick} />
       <QuizBanner onOpenQuiz={() => setQuizOpen(true)} />
