@@ -1,12 +1,30 @@
 "use client";
 
+interface AffiliateLink {
+  id: number;
+  retailer: string;
+  url: string;
+  price: string;
+}
+
+interface HotPickProduct {
+  id: number;
+  name: string;
+  brand: string;
+  emoji: string;
+  price: string;
+  rating: number;
+  affiliateLinks: AffiliateLink[];
+}
+
 interface HeroProps {
   onOpenQuiz: () => void;
+  hotPickProduct?: HotPickProduct | null;
 }
 
 const PILLS = ["Gas", "Electric", "Battery", "Robotic", "Riding"];
 
-export function Hero({ onOpenQuiz }: HeroProps) {
+export function Hero({ onOpenQuiz, hotPickProduct }: HeroProps) {
   return (
     <section id="top" className="hero-section" style={{
       minHeight: "100vh",
@@ -131,6 +149,7 @@ export function Hero({ onOpenQuiz }: HeroProps) {
           userSelect: "none",
         }}>MOWER</div>
 
+        {hotPickProduct && (
         <div className="hero-float" style={{
           background: "rgba(255,255,255,0.05)",
           border: "1px solid rgba(168,216,50,0.2)",
@@ -150,28 +169,67 @@ export function Hero({ onOpenQuiz }: HeroProps) {
             letterSpacing: "0.05em",
           }}>🔥 HOT PICK</div>
 
-          <div style={{ fontSize: "5rem", textAlign: "center", marginBottom: "1rem" }}>🌿</div>
+          <div style={{ fontSize: "5rem", textAlign: "center", marginBottom: "1rem" }}>{hotPickProduct.emoji}</div>
 
-          <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.75rem", marginBottom: 4, letterSpacing: "0.1em" }}>EGO POWER+</div>
+          <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.75rem", marginBottom: 4, letterSpacing: "0.1em" }}>
+            {hotPickProduct.brand.toUpperCase()}
+          </div>
           <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.4rem", color: "var(--white)", marginBottom: "1rem" }}>
-            LM2135SP Self-Propelled
+            {hotPickProduct.name}
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: "1rem" }}>
-            <span style={{ color: "#fbbf24", fontSize: "1.1rem" }}>★★★★★</span>
-            <span style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.82rem" }}>4.9 (2,847 reviews)</span>
+            <span style={{ color: "#fbbf24", fontSize: "1.1rem" }}>{"★".repeat(Math.round(hotPickProduct.rating))}</span>
+            <span style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.82rem" }}>{hotPickProduct.rating}</span>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div>
-              <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "var(--lime)" }}>$549</span>
-              <span style={{ color: "rgba(255,255,255,0.4)", textDecoration: "line-through", marginLeft: 8, fontSize: "0.9rem" }}>$649</span>
-            </div>
-            <div style={{ background: "rgba(168,216,50,0.15)", color: "var(--lime)", padding: "4px 10px", borderRadius: 6, fontSize: "0.78rem", fontWeight: 600 }}>
-              Save $100
-            </div>
+          <div style={{ marginBottom: "1.25rem" }}>
+            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "var(--lime)" }}>
+              {hotPickProduct.price}
+            </span>
           </div>
+
+          {/* Affiliate link buttons */}
+          {hotPickProduct.affiliateLinks.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {hotPickProduct.affiliateLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    background: "rgba(168,216,50,0.12)",
+                    border: "1px solid rgba(168,216,50,0.25)",
+                    borderRadius: 8,
+                    padding: "9px 14px",
+                    textDecoration: "none",
+                    transition: "background 0.2s, border-color 0.2s",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(168,216,50,0.22)";
+                    e.currentTarget.style.borderColor = "rgba(168,216,50,0.5)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = "rgba(168,216,50,0.12)";
+                    e.currentTarget.style.borderColor = "rgba(168,216,50,0.25)";
+                  }}
+                >
+                  <span style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--white)" }}>
+                    {link.retailer}
+                  </span>
+                  <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--lime)" }}>
+                    {link.price ? link.price : "Shop Now"} ↗
+                  </span>
+                </a>
+              ))}
+            </div>
+          )}
         </div>
+        )}
 
         {/* Category pills */}
         <div style={{ display: "flex", gap: 8, marginTop: "1.5rem", flexWrap: "wrap", justifyContent: "center" }}>

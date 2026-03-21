@@ -5,10 +5,11 @@ import prisma from "@/lib/prisma";
 import { seedIfEmpty } from "@/lib/seed";
 import { AdminHeader } from "@/components/AdminHeader";
 import { AdsToggle } from "@/components/AdsToggle";
+import { HotPickSelector } from "@/components/HotPickSelector";
 
 export default async function AdminPage() {
   await seedIfEmpty();
-  const [products, reviews, guides, categories, affiliateLinks, adsSetting, freqSetting] = await Promise.all([
+  const [products, reviews, guides, categories, affiliateLinks, adsSetting, freqSetting, hotPickSetting, allProducts] = await Promise.all([
     prisma.product.count(),
     prisma.review.count(),
     prisma.guide.count(),
@@ -16,9 +17,12 @@ export default async function AdminPage() {
     prisma.affiliateLink.count(),
     prisma.setting.findUnique({ where: { key: "adsEnabled" } }),
     prisma.setting.findUnique({ where: { key: "adFrequency" } }),
+    prisma.setting.findUnique({ where: { key: "hotPickProductId" } }),
+    prisma.product.findMany({ orderBy: { id: "asc" }, include: { affiliateLinks: true } }),
   ]);
   const adsEnabled = adsSetting?.value === "true";
   const adFrequency = parseInt(freqSetting?.value ?? "4", 10);
+  const hotPickProductId = hotPickSetting?.value ? parseInt(hotPickSetting.value, 10) : null;
 
   const cards = [
     { label: "Products", count: products, href: "/admin/products", emoji: "🌿" },
@@ -42,6 +46,9 @@ export default async function AdminPage() {
             Site Settings
           </h2>
           <AdsToggle initialValue={adsEnabled} initialFrequency={adFrequency} />
+          <div style={{ marginTop: "1rem" }}>
+            <HotPickSelector products={allProducts} currentHotPickId={hotPickProductId} />
+          </div>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1.5rem" }}>

@@ -13,6 +13,16 @@ import { Newsletter } from "./Newsletter";
 import { Footer } from "./Footer";
 import { QuizModal } from "./QuizModal";
 
+interface HotPickProduct {
+  id: number;
+  name: string;
+  brand: string;
+  emoji: string;
+  price: string;
+  rating: number;
+  affiliateLinks: { id: number; retailer: string; url: string; price: string }[];
+}
+
 interface Props {
   products: ProductRow[];
   categories: { id: number; name: string; emoji: string; price: string; slug: string }[];
@@ -21,9 +31,10 @@ interface Props {
   brands: string[];
   adsEnabled?: boolean;
   adFrequency?: number;
+  hotPickProduct?: HotPickProduct | null;
 }
 
-export function ClientPage({ products, categories, reviews, guides, brands, adsEnabled, adFrequency }: Props) {
+export function ClientPage({ products, categories, reviews, guides, brands, adsEnabled, adFrequency, hotPickProduct }: Props) {
   const [quizOpen, setQuizOpen] = useState(false);
   const [activeBrand, setActiveBrand] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -48,7 +59,7 @@ export function ClientPage({ products, categories, reviews, guides, brands, adsE
   return (
     <>
       <Header onOpenQuiz={() => setQuizOpen(true)} />
-      <Hero onOpenQuiz={() => setQuizOpen(true)} />
+      <Hero onOpenQuiz={() => setQuizOpen(true)} hotPickProduct={hotPickProduct} />
       <Brands brands={brands} onBrandClick={handleBrandClick} />
       <Categories categories={categories} onCategoryClick={handleCategoryClick} />
       <QuizBanner onOpenQuiz={() => setQuizOpen(true)} />
