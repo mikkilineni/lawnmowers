@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { AddToCompareButton } from "./AddToCompareButton";
 
 type BadgeType = "best" | "popular" | "new" | "sale";
 
@@ -286,7 +287,7 @@ export function Products({ products, activeBrand, activeCategory, onClearFilter,
           const showAd = adsEnabled && i > 0 && (i + 1) % adFrequency === 0;
           const items = [];
           if (showAd) items.push(<AdCard key={`ad-${i}`} />);
-          items.push(renderCard(p));
+          items.push(<ProductCard key={p.id} p={p} />);
           return items;
         })}
       </div>
@@ -294,11 +295,11 @@ export function Products({ products, activeBrand, activeCategory, onClearFilter,
   );
 }
 
-function renderCard(p: ProductRow) {
+function ProductCard({ p }: { p: ProductRow }) {
           const badge = BADGE_COLORS[p.badgeType];
           const links = p.affiliateLinks ?? [];
           return (
-            <div key={p.id} className={p.badgeType ? `card-${p.badgeType}` : ""} style={{
+            <div className={p.badgeType ? `card-${p.badgeType}` : ""} style={{
               background: "var(--white)",
               borderRadius: 12,
               overflow: "hidden",
@@ -415,6 +416,9 @@ function renderCard(p: ProductRow) {
                     Read Full Review →
                   </Link>
                 )}
+                <div style={{ marginTop: "0.5rem" }}>
+                  <AddToCompareButton productId={p.id} />
+                </div>
               </div>
             </div>
           );

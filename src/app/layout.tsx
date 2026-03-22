@@ -4,6 +4,7 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { SubscribePopup } from "@/components/SubscribePopup";
 import { SocialSidebar } from "@/components/SocialSidebar";
 import { SessionProvider } from "@/components/SessionProvider";
+import { CompareBar } from "@/components/CompareBar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ChatWidget />
           <SubscribePopup />
           <SocialSidebar />
+          <CompareBar />
         </SessionProvider>
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
