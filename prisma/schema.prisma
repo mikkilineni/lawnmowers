@@ -60,11 +60,13 @@ model Review {
 
 model Guide {
   id       Int    @id @default(autoincrement())
+  slug     String @unique @default("")
   emoji    String
   tag      String
   title    String
   readTime String
   updated  String
+  content  String @default("")
 }
 
 model Brand {

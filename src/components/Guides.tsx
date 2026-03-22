@@ -1,4 +1,4 @@
-interface GuideRow { id: number; emoji: string; tag: string; title: string; readTime: string; updated: string; }
+interface GuideRow { id: number; slug: string; emoji: string; tag: string; title: string; readTime: string; updated: string; }
 
 export function Guides({ guides }: { guides: GuideRow[] }) {
   return (
@@ -14,7 +14,7 @@ export function Guides({ guides }: { guides: GuideRow[] }) {
         gap: "1.5rem",
       }}>
         {guides.map(g => (
-          <a key={g.id} href="#" style={{
+          <a key={g.id} href={g.slug ? `/guides/${g.slug}` : "#"} style={{
             background: "var(--white)",
             borderRadius: 12,
             overflow: "hidden",

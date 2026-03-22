@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-interface Guide { id: number; emoji: string; tag: string; title: string; readTime: string; updated: string; }
+interface Guide { id: number; slug: string; emoji: string; tag: string; title: string; readTime: string; updated: string; content: string; }
 
 const inputStyle: React.CSSProperties = {
   border: "1px solid #ddd", borderRadius: 6, padding: "8px 12px",
@@ -12,7 +12,7 @@ const inputStyle: React.CSSProperties = {
 
 export default function AdminGuidesPage() {
   const [guides, setGuides] = useState<Guide[]>([]);
-  const [form, setForm] = useState({ emoji: "📖", tag: "Buying Guide", title: "", readTime: "", updated: "" });
+  const [form, setForm] = useState({ slug: "", emoji: "📖", tag: "Buying Guide", title: "", readTime: "", updated: "", content: "" });
 
   const fetch_ = async () => {
     const res = await fetch("/api/guides");
@@ -25,7 +25,7 @@ export default function AdminGuidesPage() {
     e.preventDefault();
     await fetch("/api/guides", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
     await fetch_();
-    setForm({ emoji: "📖", tag: "Buying Guide", title: "", readTime: "", updated: "" });
+    setForm({ slug: "", emoji: "📖", tag: "Buying Guide", title: "", readTime: "", updated: "", content: "" });
   };
 
   const handleDelete = async (id: number) => {
@@ -44,10 +44,17 @@ export default function AdminGuidesPage() {
           <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", color: "var(--dark)", marginBottom: "1.25rem" }}>Add Guide</h2>
           <form onSubmit={handleAdd} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "0.75rem" }}>
             <input placeholder="Title *" value={form.title} onChange={e => setForm(f => ({...f, title: e.target.value}))} style={{...inputStyle, gridColumn: "1 / -1"}} required />
+            <input placeholder="Slug * (e.g. electric-vs-gas-mowers)" value={form.slug} onChange={e => setForm(f => ({...f, slug: e.target.value.toLowerCase().replace(/\s+/g, "-")}))} style={{...inputStyle, gridColumn: "1 / -1"}} required />
             <input placeholder="Emoji" value={form.emoji} onChange={e => setForm(f => ({...f, emoji: e.target.value}))} style={inputStyle} />
             <input placeholder="Tag (e.g. Buying Guide)" value={form.tag} onChange={e => setForm(f => ({...f, tag: e.target.value}))} style={inputStyle} required />
             <input placeholder="Read time (e.g. 8 min read)" value={form.readTime} onChange={e => setForm(f => ({...f, readTime: e.target.value}))} style={inputStyle} required />
             <input placeholder="Updated (e.g. Updated Jan 2025)" value={form.updated} onChange={e => setForm(f => ({...f, updated: e.target.value}))} style={inputStyle} required />
+            <textarea
+              placeholder="Article content (separate paragraphs with a blank line)"
+              value={form.content}
+              onChange={e => setForm(f => ({...f, content: e.target.value}))}
+              style={{...inputStyle, gridColumn: "1 / -1", minHeight: 200, resize: "vertical", lineHeight: 1.6}}
+            />
             <button type="submit" style={{ background: "var(--green)", color: "white", border: "none", borderRadius: 6, padding: "9px 20px", fontWeight: 600, cursor: "pointer" }}>
               Add Guide
             </button>
@@ -64,7 +71,12 @@ export default function AdminGuidesPage() {
                   <div style={{ color: "var(--muted)", fontSize: "0.75rem" }}>{g.tag} · {g.readTime} · {g.updated}</div>
                 </div>
               </div>
-              <button onClick={() => handleDelete(g.id)} style={{ background: "none", border: "1px solid #ddd", borderRadius: 6, padding: "4px 10px", cursor: "pointer", color: "#ef4444", fontSize: "0.78rem", flexShrink: 0 }}>Delete</button>
+              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                {g.slug && (
+                  <a href={`/guides/${g.slug}`} target="_blank" rel="noopener noreferrer" style={{ background: "none", border: "1px solid #ddd", borderRadius: 6, padding: "4px 10px", color: "var(--green)", fontSize: "0.78rem", textDecoration: "none" }}>View ↗</a>
+                )}
+                <button onClick={() => handleDelete(g.id)} style={{ background: "none", border: "1px solid #ddd", borderRadius: 6, padding: "4px 10px", cursor: "pointer", color: "#ef4444", fontSize: "0.78rem" }}>Delete</button>
+              </div>
             </div>
           ))}
         </div>
