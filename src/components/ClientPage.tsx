@@ -27,7 +27,7 @@ interface Props {
   products: ProductRow[];
   categories: { id: number; name: string; emoji: string; price: string; slug: string }[];
   reviews: { id: number; text: string; name: string; location: string; initial: string }[];
-  guides: { id: number; emoji: string; tag: string; title: string; readTime: string; updated: string }[];
+  guides: { id: number; slug: string; emoji: string; tag: string; title: string; readTime: string; updated: string }[];
   brands: string[];
   adsEnabled?: boolean;
   adFrequency?: number;
