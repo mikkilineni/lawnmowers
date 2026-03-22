@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { GuideEditor } from "@/components/GuideEditor";
 
 interface Guide { id: number; slug: string; emoji: string; tag: string; title: string; readTime: string; updated: string; content: string; }
 
@@ -90,12 +91,9 @@ export default function AdminGuidesPage() {
             <input placeholder="Tag (e.g. Buying Guide)" value={form.tag} onChange={e => setForm(f => ({...f, tag: e.target.value}))} style={inputStyle} required />
             <input placeholder="Read time (e.g. 8 min read)" value={form.readTime} onChange={e => setForm(f => ({...f, readTime: e.target.value}))} style={inputStyle} required />
             <input placeholder="Updated (e.g. Updated Jan 2025)" value={form.updated} onChange={e => setForm(f => ({...f, updated: e.target.value}))} style={inputStyle} required />
-            <textarea
-              placeholder="Article content (separate paragraphs with a blank line)"
-              value={form.content}
-              onChange={e => setForm(f => ({...f, content: e.target.value}))}
-              style={{...inputStyle, gridColumn: "1 / -1", minHeight: 200, resize: "vertical", lineHeight: 1.6}}
-            />
+            <div style={{ gridColumn: "1 / -1" }}>
+              <GuideEditor value={form.content} onChange={html => setForm(f => ({...f, content: html}))} />
+            </div>
             <button type="submit" style={{ background: "var(--green)", color: "white", border: "none", borderRadius: 6, padding: "9px 20px", fontWeight: 600, cursor: "pointer" }}>
               Add Guide
             </button>
@@ -118,11 +116,9 @@ export default function AdminGuidesPage() {
                     <input value={editForm.readTime} onChange={e => setEditForm(f => f && ({...f, readTime: e.target.value}))} style={inputStyle} placeholder="Read time" />
                     <input value={editForm.updated} onChange={e => setEditForm(f => f && ({...f, updated: e.target.value}))} style={inputStyle} placeholder="Updated" />
                   </div>
-                  <textarea
+                  <GuideEditor
                     value={editForm.content}
-                    onChange={e => setEditForm(f => f && ({...f, content: e.target.value}))}
-                    style={{...inputStyle, minHeight: 260, resize: "vertical", lineHeight: 1.7}}
-                    placeholder="Article content (separate paragraphs with a blank line)"
+                    onChange={html => setEditForm(f => f && ({...f, content: html}))}
                   />
                   <div style={{ display: "flex", gap: 8 }}>
                     <button onClick={handleSave} disabled={saving} style={{ background: "var(--green)", color: "white", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 600, cursor: "pointer", opacity: saving ? 0.6 : 1 }}>

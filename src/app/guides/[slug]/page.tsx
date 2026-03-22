@@ -25,7 +25,9 @@ export default async function GuidePage({ params }: Props) {
   const guide = await prisma.guide.findUnique({ where: { slug } });
   if (!guide) notFound();
 
-  const paragraphs = guide.content.split("\n\n").filter(Boolean);
+  // Detect if content is HTML (from the editor) or legacy plain text
+  const isHtml = guide.content.trimStart().startsWith("<");
+  const paragraphs = isHtml ? [] : guide.content.split("\n\n").filter(Boolean);
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", background: "var(--cream, #f8f5f0)", minHeight: "100vh" }}>
@@ -88,15 +90,19 @@ export default async function GuidePage({ params }: Props) {
         {/* Content */}
         {guide.content ? (
           <div style={{ background: "white", borderRadius: 16, padding: "2rem 2.5rem", boxShadow: "0 2px 12px rgba(0,0,0,0.05)", marginBottom: "1.5rem" }}>
-            {paragraphs.map((para, i) => (
+            {isHtml ? (
               <>
-                <p key={i} style={{
-                  color: "var(--dark, #1c2e0e)", lineHeight: 1.85,
-                  fontSize: "0.97rem", marginBottom: "1.25rem",
-                }}>{para}</p>
-                {i === Math.floor(paragraphs.length / 2) - 1 && <InArticleAd key="ad" />}
+                <div className="guide-content" dangerouslySetInnerHTML={{ __html: guide.content }} />
+                <InArticleAd />
               </>
-            ))}
+            ) : (
+              paragraphs.map((para, i) => (
+                <>
+                  <p key={i} style={{ color: "var(--dark, #1c2e0e)", lineHeight: 1.85, fontSize: "0.97rem", marginBottom: "1.25rem" }}>{para}</p>
+                  {i === Math.floor(paragraphs.length / 2) - 1 && <InArticleAd key="ad" />}
+                </>
+              ))
+            )}
           </div>
         ) : (
           <div style={{ background: "white", borderRadius: 16, padding: "3rem 2.5rem", boxShadow: "0 2px 12px rgba(0,0,0,0.05)", textAlign: "center", color: "var(--muted, #8b8680)" }}>
@@ -113,6 +119,19 @@ export default async function GuidePage({ params }: Props) {
           </Link>
         </div>
       </main>
+
+      <style>{`
+        .guide-content { color: var(--dark, #1c2e0e); font-size: 0.97rem; line-height: 1.85; }
+        .guide-content p { margin: 0 0 1.1rem; }
+        .guide-content h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.02em; margin: 2rem 0 0.75rem; }
+        .guide-content h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.02em; margin: 1.5rem 0 0.5rem; }
+        .guide-content ul, .guide-content ol { padding-left: 1.5rem; margin: 0 0 1.1rem; }
+        .guide-content li { margin-bottom: 0.4rem; }
+        .guide-content blockquote { border-left: 3px solid #a8d832; padding: 0.25rem 0 0.25rem 1rem; color: #666; margin: 1.25rem 0; font-style: italic; }
+        .guide-content hr { border: none; border-top: 1px solid #e5e1db; margin: 1.5rem 0; }
+        .guide-content a { color: #1a6b2a; text-decoration: underline; }
+        .guide-content strong { font-weight: 700; }
+      `}</style>
     </div>
   );
 }
