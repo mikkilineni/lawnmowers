@@ -5,6 +5,7 @@ import { SubscribePopup } from "@/components/SubscribePopup";
 import { SocialSidebar } from "@/components/SocialSidebar";
 import { SessionProvider } from "@/components/SessionProvider";
 import { CompareBar } from "@/components/CompareBar";
+import { CompareProvider } from "@/components/CompareProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -34,11 +35,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <SessionProvider>
-          {children}
-          <ChatWidget />
-          <SubscribePopup />
-          <SocialSidebar />
-          <CompareBar />
+          <CompareProvider>
+            {children}
+            <ChatWidget />
+            <SubscribePopup />
+            <SocialSidebar />
+            <CompareBar />
+          </CompareProvider>
         </SessionProvider>
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />

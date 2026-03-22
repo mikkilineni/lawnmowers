@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useCompareSelection } from "@/hooks/useCompareSelection";
+import { useCompare } from "@/components/CompareProvider";
 
 export function CompareBar() {
-  const { ids, clear, toggle } = useCompareSelection();
+  const { ids, clear, toggle } = useCompare();
 
   if (ids.length === 0) return null;
 

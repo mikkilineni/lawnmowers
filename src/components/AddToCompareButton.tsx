@@ -1,9 +1,9 @@
 "use client";
 
-import { useCompareSelection } from "@/hooks/useCompareSelection";
+import { useCompare } from "@/components/CompareProvider";
 
 export function AddToCompareButton({ productId }: { productId: number }) {
-  const { isSelected, toggle, maxReached } = useCompareSelection();
+  const { isSelected, toggle, maxReached } = useCompare();
   const selected = isSelected(productId);
   const disabled = !selected && maxReached;
 
