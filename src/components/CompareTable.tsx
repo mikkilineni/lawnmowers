@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { ProductSpecs } from "@/types/specs";
 
 interface AffiliateLink { id: number; retailer: string; url: string; price: string; }
 
@@ -23,6 +24,7 @@ interface CompareProduct {
   pros: string[];
   cons: string[];
   description: string;
+  specsJson: string;
   affiliateLinks: AffiliateLink[];
 }
 
@@ -37,13 +39,93 @@ function copyUrl() {
   navigator.clipboard.writeText(window.location.href).then(() => alert("Link copied!"));
 }
 
+// ── Spec row definitions ────────────────────────────────────────────────────
+
+interface SpecRowDef {
+  label: string;
+  key: keyof ProductSpecs;
+  unit?: string;
+  better?: "higher" | "lower"; // undefined = no highlight
+  format?: (v: unknown, specs?: ProductSpecs) => string;
+}
+
+const SPEC_ROWS: SpecRowDef[] = [
+  { label: "Power Type",      key: "powerType",        format: v => String(v ?? "").charAt(0).toUpperCase() + String(v ?? "").slice(1) },
+  { label: "Engine CC",       key: "engineCC",         unit: "cc",   better: "higher" },
+  { label: "Voltage",         key: "voltage",          unit: "V",    better: "higher" },
+  { label: "Battery",         key: "batteryAh",        unit: "Ah",   better: "higher" },
+  { label: "Horsepower",      key: "horsepower",       unit: "HP",   better: "higher" },
+  { label: "Deck Width",      key: "deckWidth",        unit: "\"",   better: "higher" },
+  { label: "Cut Height",      key: "cuttingHeightMin", unit: "–",    format: (_, specs) => {
+    const s = specs as ProductSpecs;
+    if (s.cuttingHeightMin != null && s.cuttingHeightMax != null)
+      return `${s.cuttingHeightMin}"–${s.cuttingHeightMax}"`;
+    if (s.cuttingHeightMax != null) return `up to ${s.cuttingHeightMax}"`;
+    if (s.cuttingHeightMin != null) return `${s.cuttingHeightMin}"`;
+    return "—";
+  }},
+  { label: "Height Positions", key: "cuttingPositions", better: "higher" },
+  { label: "Drive Type",      key: "driveType",        format: v => String(v ?? "").toUpperCase() || "—" },
+  { label: "Max Speed",       key: "speedMax",         unit: " MPH", better: "higher" },
+  { label: "Runtime",         key: "runtimeMinutes",   unit: " min", better: "higher" },
+  { label: "Charge Time",     key: "chargeTimeMinutes",unit: " min", better: "lower" },
+  { label: "Coverage",        key: "acreageCoverage",  unit: " acres", better: "higher" },
+  { label: "Weight",          key: "weightLbs",        unit: " lbs", better: "lower" },
+  { label: "Max Slope",       key: "slopeMax",         unit: "°",    better: "higher" },
+  { label: "Installation",    key: "installation",     format: v => v ? String(v) : "—" },
+  { label: "GPS",             key: "gpsType",          format: v => v ? String(v) : "—" },
+  { label: "Mulching",        key: "mulching",         format: v => v ? "✓" : "—" },
+  { label: "Bagging",         key: "bagging",          format: v => v ? "✓" : "—" },
+  { label: "Side Discharge",  key: "sideDischarge",    format: v => v ? "✓" : "—" },
+  { label: "App Control",     key: "appControl",       format: v => v ? "✓" : "—" },
+  { label: "Self-Propelled",  key: "selfPropelled",    format: v => v ? "✓" : "—" },
+  { label: "Warranty",        key: "warrantyYears",    unit: " yrs", better: "higher" },
+];
+
 export function CompareTable({ products }: { products: CompareProduct[] }) {
   const n = products.length;
+
+  // Parse specs for each product
+  const specs: ProductSpecs[] = products.map(p => {
+    try { return JSON.parse(p.specsJson || "{}") as ProductSpecs; }
+    catch { return {}; }
+  });
+
+  // Compute best values for numeric rows
+  const bestValues: Record<string, number> = {};
+  for (const row of SPEC_ROWS) {
+    if (!row.better) continue;
+    const vals = specs.map(s => s[row.key] as number | undefined).filter((v): v is number => v != null);
+    if (vals.length < 2) continue;
+    bestValues[row.key] = row.better === "higher" ? Math.max(...vals) : Math.min(...vals);
+  }
+
+  // Check if any product has specs
+  const hasSpecs = specs.some(s => Object.keys(s).length > 0);
+
+  function renderSpecValue(row: SpecRowDef, i: number): string {
+    const s = specs[i];
+    const rawVal = s[row.key];
+    if (rawVal == null || rawVal === "") return "—";
+    if (row.format) {
+      // pass full specs for multi-field rows
+      return (row.format as (v: unknown, specs?: ProductSpecs) => string)(rawVal, s);
+    }
+    return `${rawVal}${row.unit ?? ""}`;
+  }
+
+  function isBest(row: SpecRowDef, i: number): boolean {
+    if (!row.better) return false;
+    const best = bestValues[row.key];
+    if (best == null) return false;
+    const val = specs[i][row.key] as number | undefined;
+    return val === best;
+  }
 
   return (
     <div style={{ overflowX: "auto" }}>
       {/* Share button */}
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1rem" }}>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1rem", padding: "1rem 1.25rem 0" }}>
         <button onClick={copyUrl} style={{
           background: "white", border: "1px solid #ddd", borderRadius: 8,
           padding: "8px 18px", fontSize: "0.82rem", fontWeight: 600,
@@ -149,6 +231,61 @@ export function CompareTable({ products }: { products: CompareProduct[] }) {
               </td>
             ))}
           </tr>
+
+          {/* ── Specifications Section ── */}
+          {hasSpecs && (
+            <>
+              <tr>
+                <td colSpan={n + 1} style={{
+                  padding: "0.6rem 1.25rem",
+                  background: "var(--dark)",
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: "1rem",
+                  color: "var(--lime, #a8d832)",
+                  letterSpacing: "0.12em",
+                }}>
+                  SPECIFICATIONS
+                </td>
+              </tr>
+
+              {SPEC_ROWS.map((row, ri) => {
+                const vals = products.map((_, i) => renderSpecValue(row, i));
+                // Skip row if all values are "—"
+                if (vals.every(v => v === "—")) return null;
+
+                return (
+                  <tr key={row.key} style={{ background: ri % 2 === 0 ? "white" : "var(--cream)" }}>
+                    <td style={labelCell}>{row.label}</td>
+                    {products.map((p, i) => {
+                      const best = isBest(row, i);
+                      const val = vals[i];
+                      return (
+                        <td key={p.id} style={{
+                          ...dataCell,
+                          textAlign: "center",
+                          background: best ? "rgba(168,216,50,0.08)" : undefined,
+                          borderLeft: best ? "2px solid rgba(168,216,50,0.4)" : undefined,
+                        }}>
+                          <span style={{
+                            fontSize: "0.9rem",
+                            fontWeight: best ? 700 : 400,
+                            color: val === "✓" ? "var(--green)" : best ? "var(--green)" : val === "—" ? "var(--muted)" : "var(--dark)",
+                          }}>
+                            {val}
+                          </span>
+                          {best && (
+                            <span style={{ display: "block", fontSize: "0.65rem", color: "var(--green)", fontWeight: 600, marginTop: 1 }}>
+                              ▲ BEST
+                            </span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </>
+          )}
 
           {/* ── Pros ── */}
           <tr style={{ background: "var(--cream)" }}>

@@ -3,12 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ImportCSV } from "@/components/ImportCSV";
+import { SpecsEditor } from "@/components/SpecsEditor";
+import type { ProductSpecs } from "@/types/specs";
 
 interface Product {
   id: number; slug: string; badge: string; badgeType: string; brand: string; name: string;
   emoji: string; rating: number; reviewCount: number; price: string;
   originalPrice: string; savings: string; tags: string[]; categories: string[];
   description: string; image: string; pros: string; cons: string; review: string;
+  specsJson: string;
 }
 
 interface ReviewEditor {
@@ -41,6 +44,7 @@ export default function AdminProductsPage() {
     slug: "", pros: "", cons: "", review: "",
   });
   const [editors, setEditors] = useState<Record<number, ReviewEditor>>({});
+  const [specsOpen, setSpecsOpen] = useState<Record<number, boolean>>({});
 
   const fetch_ = async () => {
     const res = await fetch("/api/products");
@@ -221,6 +225,12 @@ export default function AdminProductsPage() {
                         >
                           {editors[p.id] ? "Close" : "Edit Review"}
                         </button>
+                        <button
+                          onClick={() => setSpecsOpen(prev => ({ ...prev, [p.id]: !prev[p.id] }))}
+                          style={{ background: "none", border: "1px solid #a8d832", borderRadius: 6, padding: "4px 10px", cursor: "pointer", color: "var(--green)", fontSize: "0.78rem" }}
+                        >
+                          {specsOpen[p.id] ? "Close Specs" : "Edit Specs"}
+                        </button>
                         {p.slug && (
                           <a href={`/reviews/${p.slug}`} target="_blank" style={{ background: "none", border: "1px solid #ddd", borderRadius: 6, padding: "4px 10px", cursor: "pointer", color: "var(--green)", fontSize: "0.78rem", textDecoration: "none" }}>
                             View
@@ -232,6 +242,21 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                   </tr>
+
+                  {/* Inline specs editor */}
+                  {specsOpen[p.id] && (
+                    <tr key={`specs-${p.id}`}>
+                      <td colSpan={6} style={{ padding: "0 12px 16px", background: "#f0f7e6", borderBottom: "1px solid #e5e1db" }}>
+                        <SpecsEditor
+                          productId={p.id}
+                          productName={`${p.brand} ${p.name}`}
+                          initialSpecs={(() => { try { return JSON.parse(p.specsJson || "{}"); } catch { return {}; } })()}
+                          onClose={() => setSpecsOpen(prev => ({ ...prev, [p.id]: false }))}
+                          onSaved={fetch_}
+                        />
+                      </td>
+                    </tr>
+                  )}
 
                   {/* Inline review editor */}
                   {editors[p.id] && (

@@ -57,6 +57,7 @@ export default async function ComparePage({ searchParams }: Props) {
       pros: p!.pros ? p!.pros.split("\n").filter(Boolean) : [],
       cons: p!.cons ? p!.cons.split("\n").filter(Boolean) : [],
       description: p!.description,
+      specsJson: p!.specsJson,
       affiliateLinks: p!.affiliateLinks,
     }));
 
