@@ -1,0 +1,6 @@
+name,brand,price,original_price,image,description,category,tags
+"EGO Power+ LM2102SP 21"" Self-Propelled Mower",EGO,$549.00,$649.00,,"56V brushless motor with up to 60 min runtime. Self-propelled with variable speed.",electric,"self-propelled,cordless,56V"
+"Honda HRX217VKA 21"" Variable Speed Mower",Honda,$699.00,$699.00,,"GCV200 engine with Versamow mulching system. 4-in-1 capability.",gas,"self-propelled,honda,mulching"
+"Husqvarna Automower 315X Robotic Mower",Husqvarna,$1599.00,$1799.00,,"GPS-assisted navigation works on slopes up to 40%. Wire boundary system.",robotic,"gps,wire,automatic"
+"Greenworks Pro 60V 21"" Push Mower",Greenworks,$299.00,$349.00,,"60V brushless motor 5Ah battery included 7-position height adjustment.",electric,"push,cordless,60V"
+"Cub Cadet XT1 LT42 Riding Mower","Cub Cadet",$1699.00,$1999.00,,"Kohler 547cc engine 42in deck hydrostatic transmission 6-year warranty.",riding,"gas,hydrostatic,42-inch"
