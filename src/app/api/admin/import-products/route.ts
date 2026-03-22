@@ -29,8 +29,8 @@ interface ProductInput {
   tags: string[];
   description: string;
   image: string;
-  pros: string;
-  cons: string;
+  pros: string | string[];
+  cons: string | string[];
   review: string;
   affiliateLinks: AffiliateInput[];
 }
@@ -58,12 +58,12 @@ export async function POST(request: Request) {
         price: row.price,
         originalPrice: row.originalPrice || row.price,
         savings: row.savings || "",
-        categories: JSON.stringify(row.categories),
-        tags: JSON.stringify(row.tags),
+        categories: row.categories,
+        tags: row.tags,
         description: row.description || "",
         image: row.image || "",
-        pros: row.pros || "",
-        cons: row.cons || "",
+        pros: typeof row.pros === 'string' ? row.pros.split('\n').filter(Boolean) : (row.pros ?? []),
+        cons: typeof row.cons === 'string' ? row.cons.split('\n').filter(Boolean) : (row.cons ?? []),
         review: row.review || "",
       };
 

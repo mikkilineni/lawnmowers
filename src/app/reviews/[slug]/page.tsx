@@ -37,10 +37,10 @@ export default async function ReviewPage({ params }: Props) {
 
   if (!product) notFound();
 
-  const tags: string[] = JSON.parse(product.tags);
-  const categories: string[] = JSON.parse(product.categories);
-  const pros: string[] = product.pros ? product.pros.split("\n").filter(Boolean) : [];
-  const cons: string[] = product.cons ? product.cons.split("\n").filter(Boolean) : [];
+  const tags = product.tags;
+  const categories = product.categories;
+  const pros = product.pros;
+  const cons = product.cons;
 
   const allProducts = await prisma.product.findMany({
     where: { id: { not: product.id } },
@@ -48,8 +48,8 @@ export default async function ReviewPage({ params }: Props) {
 
   const related = allProducts
     .filter(p => {
-      const pCats: string[] = JSON.parse(p.categories);
-      const pTags: string[] = JSON.parse(p.tags);
+      const pCats = p.categories;
+      const pTags = p.tags;
       return pCats.some(c => categories.includes(c)) || pTags.some(t => tags.includes(t));
     })
     .slice(0, 3)

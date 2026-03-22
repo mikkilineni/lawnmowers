@@ -9,7 +9,7 @@ datasource db {
 
 model Product {
   id             Int             @id @default(autoincrement())
-  slug           String          @unique @default("")
+  slug           String?         @unique
   badge          String
   badgeType      String
   brand          String
@@ -20,15 +20,15 @@ model Product {
   price          String
   originalPrice  String
   savings        String
-  tags           String
-  categories     String
+  tags           String[]
+  categories     String[]
   description    String          @default("")
   image          String          @default("")
-  pros           String          @default("")
-  cons           String          @default("")
+  pros           String[]        @default([])
+  cons           String[]        @default([])
   review         String          @default("")
-  extrasJson     String          @default("{}")
-  specsJson      String          @default("{}")
+  extrasJson     Json            @default("{}")
+  specsJson      Json            @default("{}")
   createdAt      DateTime        @default(now())
   affiliateLinks AffiliateLink[]
 }
@@ -52,11 +52,12 @@ model Category {
 }
 
 model Review {
-  id       Int    @id @default(autoincrement())
-  text     String
-  name     String
-  location String
-  initial  String
+  id        Int      @id @default(autoincrement())
+  text      String
+  name      String
+  location  String
+  initial   String
+  createdAt DateTime @default(now())
 }
 
 model Guide {

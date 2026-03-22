@@ -7,11 +7,11 @@ import { SpecsEditor } from "@/components/SpecsEditor";
 import type { ProductSpecs } from "@/types/specs";
 
 interface Product {
-  id: number; slug: string; badge: string; badgeType: string; brand: string; name: string;
+  id: number; slug: string | null; badge: string; badgeType: string; brand: string; name: string;
   emoji: string; rating: number; reviewCount: number; price: string;
   originalPrice: string; savings: string; tags: string[]; categories: string[];
-  description: string; image: string; pros: string; cons: string; review: string;
-  specsJson: string;
+  description: string; image: string; pros: string[]; cons: string[]; review: string;
+  specsJson: unknown;
 }
 
 interface ReviewEditor {
@@ -82,8 +82,8 @@ export default function AdminProductsPage() {
       [p.id]: prev[p.id] ?? {
         productId: p.id,
         review: p.review ?? "",
-        pros: p.pros ?? "",
-        cons: p.cons ?? "",
+        pros: (p.pros ?? []).join("\n"),
+        cons: (p.cons ?? []).join("\n"),
         sources: [],
         generating: false,
         saving: false,
@@ -131,7 +131,7 @@ export default function AdminProductsPage() {
       const res = await fetch(`/api/products/${p.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ review: editor.review, pros: editor.pros, cons: editor.cons }),
+        body: JSON.stringify({ review: editor.review, pros: editor.pros.split("\n").filter(Boolean), cons: editor.cons.split("\n").filter(Boolean) }),
       });
       if (!res.ok) throw new Error("Failed to save");
       updateEditor(p.id, { saving: false, saved: true });
@@ -250,7 +250,7 @@ export default function AdminProductsPage() {
                         <SpecsEditor
                           productId={p.id}
                           productName={`${p.brand} ${p.name}`}
-                          initialSpecs={(() => { try { return JSON.parse(p.specsJson || "{}"); } catch { return {}; } })()}
+                          initialSpecs={(p.specsJson && typeof p.specsJson === 'object' ? p.specsJson : {}) as ProductSpecs}
                           onClose={() => setSpecsOpen(prev => ({ ...prev, [p.id]: false }))}
                           onSaved={fetch_}
                         />

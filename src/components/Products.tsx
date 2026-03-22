@@ -15,7 +15,7 @@ export interface AffiliateLink {
 
 export interface ProductRow {
   id: number;
-  slug: string;
+  slug: string | null;
   badge: string;
   badgeType: string;
   brand: string;

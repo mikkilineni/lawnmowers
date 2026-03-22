@@ -30,11 +30,7 @@ export default async function HomePage() {
 
   return (
     <ClientPage
-      products={products.map((p) => ({
-        ...p,
-        tags: JSON.parse(p.tags) as string[],
-        categories: JSON.parse(p.categories) as string[],
-      }))}
+      products={products}
       categories={categories}
       reviews={reviews}
       guides={guides}

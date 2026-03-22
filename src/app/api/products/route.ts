@@ -11,18 +11,12 @@ export async function GET(request: Request) {
 
   const filtered = category && category !== "all"
     ? products.filter((p) => {
-        const cats: string[] = JSON.parse(p.categories);
+        const cats = p.categories;
         return cats.includes(category);
       })
     : products;
 
-  return NextResponse.json(
-    filtered.map((p) => ({
-      ...p,
-      tags: JSON.parse(p.tags),
-      categories: JSON.parse(p.categories),
-    }))
-  );
+  return NextResponse.json(filtered);
 }
 
 function toSlug(str: string) {
@@ -36,10 +30,10 @@ export async function POST(request: Request) {
     data: {
       ...body,
       slug,
-      tags: JSON.stringify(body.tags ?? []),
-      categories: JSON.stringify(body.categories ?? []),
-      pros: body.pros ?? "",
-      cons: body.cons ?? "",
+      tags: body.tags ?? [],
+      categories: body.categories ?? [],
+      pros: body.pros ?? [],
+      cons: body.cons ?? [],
       review: body.review ?? "",
     },
   });

@@ -109,8 +109,8 @@ Respond in this exact JSON format:
 
     return NextResponse.json({
       review: result.review ?? "",
-      pros: (result.pros ?? []).join("\n"),
-      cons: (result.cons ?? []).join("\n"),
+      pros: result.pros ?? [],
+      cons: result.cons ?? [],
       sources: permalinks,
     });
   } catch (err) {

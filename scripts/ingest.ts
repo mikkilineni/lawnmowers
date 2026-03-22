@@ -429,8 +429,8 @@ async function upsertProduct(p: IngestedProduct): Promise<"created" | "updated" 
     price:         p.price || "—",
     originalPrice: p.originalPrice || p.price || "—",
     savings:       "",
-    tags:          JSON.stringify(p.tags),
-    categories:    JSON.stringify(p.categories),
+    tags:          p.tags,
+    categories:    p.categories,
     description:   p.description,
     image:         p.image,
   };

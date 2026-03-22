@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const product = await prisma.product.findUnique({ where: { slug } });
   if (!product) return {};
-  const extras: Extras = JSON.parse(product.extrasJson || "{}");
+  const extras = (product.extrasJson ?? {}) as Extras;
   return {
     title: `${product.brand} ${product.name} Review 2026 — Specs, Price, Pros & Cons | lawnmowers.com`,
     description: extras.tagline || product.description,
@@ -56,9 +56,9 @@ export default async function RoboticReviewPage({ params }: { params: Promise<{ 
   });
   if (!product) notFound();
 
-  const extras: Extras = JSON.parse(product.extrasJson || "{}");
-  const pros = product.pros ? product.pros.split("\n").filter(Boolean) : [];
-  const cons = product.cons ? product.cons.split("\n").filter(Boolean) : [];
+  const extras = (product.extrasJson ?? {}) as Extras;
+  const pros = product.pros;
+  const cons = product.cons;
   const quickSpecs = extras.quickSpecs ?? {};
   const specsTable = extras.specsTable ?? [];
   const faq = extras.faq ?? [];

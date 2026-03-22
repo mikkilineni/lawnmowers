@@ -7,7 +7,7 @@ interface AffiliateLink { id: number; retailer: string; url: string; price: stri
 
 interface CompareProduct {
   id: number;
-  slug: string;
+  slug: string | null;
   brand: string;
   name: string;
   emoji: string;
@@ -24,7 +24,7 @@ interface CompareProduct {
   pros: string[];
   cons: string[];
   description: string;
-  specsJson: string;
+  specsJson: unknown;
   affiliateLinks: AffiliateLink[];
 }
 
@@ -87,8 +87,7 @@ export function CompareTable({ products }: { products: CompareProduct[] }) {
 
   // Parse specs for each product
   const specs: ProductSpecs[] = products.map(p => {
-    try { return JSON.parse(p.specsJson || "{}") as ProductSpecs; }
-    catch { return {}; }
+    return (p.specsJson && typeof p.specsJson === 'object' ? p.specsJson : {}) as ProductSpecs;
   });
 
   // Compute best values for numeric rows

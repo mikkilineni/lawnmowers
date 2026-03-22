@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
   const catalogLines = products
     .map((p) => {
-      const cats = JSON.parse(p.categories).join(", ");
+      const cats = p.categories.join(", ");
       const retailers = p.affiliateLinks.map((l) => l.retailer).join(", ");
       return `ID:${p.id} | ${p.brand} ${p.name} | ${p.price} | ${cats} | Rating:${p.rating}${retailers ? ` | Buy at: ${retailers}` : ""}`;
     })
