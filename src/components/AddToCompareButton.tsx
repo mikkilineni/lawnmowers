@@ -2,14 +2,14 @@
 
 import { useCompare } from "@/components/CompareProvider";
 
-export function AddToCompareButton({ productId }: { productId: number }) {
+export function AddToCompareButton({ productId, name, emoji }: { productId: number; name: string; emoji: string }) {
   const { isSelected, toggle, maxReached } = useCompare();
   const selected = isSelected(productId);
   const disabled = !selected && maxReached;
 
   return (
     <button
-      onClick={() => toggle(productId)}
+      onClick={() => toggle({ id: productId, name, emoji })}
       disabled={disabled}
       title={disabled ? "Max 4 products" : selected ? "Remove from comparison" : "Add to comparison"}
       style={{

@@ -3,17 +3,21 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 const MAX = 4;
-const KEY = "compare_ids";
+const KEY = "compare_items";
+
+export interface CompareItem { id: number; name: string; emoji: string; }
 
 interface CompareCtx {
+  items: CompareItem[];
   ids: number[];
   isSelected: (id: number) => boolean;
-  toggle: (id: number) => void;
+  toggle: (item: CompareItem) => void;
   clear: () => void;
   maxReached: boolean;
 }
 
 const CompareContext = createContext<CompareCtx>({
+  items: [],
   ids: [],
   isSelected: () => false,
   toggle: () => {},
@@ -22,36 +26,35 @@ const CompareContext = createContext<CompareCtx>({
 });
 
 export function CompareProvider({ children }: { children: React.ReactNode }) {
-  const [ids, setIds] = useState<number[]>([]);
+  const [items, setItems] = useState<CompareItem[]>([]);
 
-  // Read from localStorage after mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem(KEY);
-      if (stored) setIds(JSON.parse(stored));
+      if (stored) setItems(JSON.parse(stored));
     } catch { /* ignore */ }
   }, []);
 
-  // Persist on every change
   useEffect(() => {
     try {
-      localStorage.setItem(KEY, JSON.stringify(ids));
+      localStorage.setItem(KEY, JSON.stringify(items));
     } catch { /* ignore */ }
-  }, [ids]);
+  }, [items]);
 
+  const ids = items.map(i => i.id);
   const isSelected = (id: number) => ids.includes(id);
 
-  const toggle = (id: number) =>
-    setIds(prev =>
-      prev.includes(id)
-        ? prev.filter(x => x !== id)
-        : prev.length < MAX ? [...prev, id] : prev
+  const toggle = (item: CompareItem) =>
+    setItems(prev =>
+      prev.some(x => x.id === item.id)
+        ? prev.filter(x => x.id !== item.id)
+        : prev.length < MAX ? [...prev, item] : prev
     );
 
-  const clear = () => setIds([]);
+  const clear = () => setItems([]);
 
   return (
-    <CompareContext.Provider value={{ ids, isSelected, toggle, clear, maxReached: ids.length >= MAX }}>
+    <CompareContext.Provider value={{ items, ids, isSelected, toggle, clear, maxReached: items.length >= MAX }}>
       {children}
     </CompareContext.Provider>
   );

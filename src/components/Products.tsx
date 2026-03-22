@@ -417,7 +417,7 @@ function ProductCard({ p }: { p: ProductRow }) {
                   </Link>
                 )}
                 <div style={{ marginTop: "0.5rem" }}>
-                  <AddToCompareButton productId={p.id} />
+                  <AddToCompareButton productId={p.id} name={p.name} emoji={p.emoji} />
                 </div>
               </div>
             </div>

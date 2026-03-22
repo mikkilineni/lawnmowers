@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useCompare } from "@/components/CompareProvider";
 
 export function CompareBar() {
-  const { ids, clear, toggle } = useCompare();
+  const { items, ids, clear, toggle } = useCompare();
 
-  if (ids.length === 0) return null;
+  if (items.length === 0) return null;
 
   return (
     <div style={{
@@ -24,24 +24,28 @@ export function CompareBar() {
 
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
         <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.08em", whiteSpace: "nowrap" }}>
-          COMPARE ({ids.length}/4):
+          COMPARE ({items.length}/4):
         </span>
-        {ids.map(id => (
-          <div key={id} style={{
+        {items.map(item => (
+          <div key={item.id} style={{
             display: "flex", alignItems: "center", gap: 6,
             background: "rgba(168,216,50,0.1)",
             border: "1px solid rgba(168,216,50,0.25)",
             borderRadius: 20, padding: "4px 10px 4px 12px",
+            maxWidth: 180,
           }}>
-            <span style={{ color: "var(--lime)", fontSize: "0.8rem", fontWeight: 600 }}>#{id}</span>
+            <span style={{ fontSize: "0.9rem" }}>{item.emoji}</span>
+            <span style={{ color: "var(--lime)", fontSize: "0.78rem", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {item.name.length > 22 ? item.name.slice(0, 22) + "…" : item.name}
+            </span>
             <button
-              onClick={() => toggle(id)}
-              style={{ background: "none", border: "none", color: "rgba(255,255,255,0.45)", cursor: "pointer", fontSize: "0.9rem", lineHeight: 1, padding: 0 }}
+              onClick={() => toggle(item)}
+              style={{ background: "none", border: "none", color: "rgba(255,255,255,0.45)", cursor: "pointer", fontSize: "0.9rem", lineHeight: 1, padding: 0, flexShrink: 0 }}
               title="Remove"
             >×</button>
           </div>
         ))}
-        {Array.from({ length: 4 - ids.length }).map((_, i) => (
+        {Array.from({ length: 4 - items.length }).map((_, i) => (
           <div key={`empty-${i}`} style={{
             width: 80, height: 28,
             border: "1px dashed rgba(255,255,255,0.15)",
@@ -66,7 +70,7 @@ export function CompareBar() {
             textDecoration: "none", whiteSpace: "nowrap",
           }}
         >
-          Compare {ids.length} Mowers →
+          Compare {items.length} Mowers →
         </Link>
       </div>
     </div>
