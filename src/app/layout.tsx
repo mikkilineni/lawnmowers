@@ -9,6 +9,7 @@ import { CompareProvider } from "@/components/CompareProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.lawnmowers.com"),
   title: "Lawnmowers.com — Find Your Perfect Mower",
   description: "Expert reviews, honest comparisons, and buying guides for lawnmowers. Trusted by 2M+ homeowners.",
   other: {

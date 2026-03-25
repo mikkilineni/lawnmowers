@@ -10,13 +10,36 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const guide = await prisma.guide.findUnique({ where: { slug } });
   if (!guide) return { title: "Guide Not Found" };
+  const description = stripHtml(guide.content).slice(0, 155);
+  const url = `/guides/${slug}`;
   return {
     title: `${guide.title} — Lawnmowers.com`,
-    description: guide.content.slice(0, 160),
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: guide.title,
+      description,
+      url,
+      siteName: "Lawnmowers.com",
+      type: "article",
+    },
   };
 }
 
@@ -29,8 +52,30 @@ export default async function GuidePage({ params }: Props) {
   const isHtml = guide.content.trimStart().startsWith("<");
   const paragraphs = isHtml ? [] : guide.content.split("\n\n").filter(Boolean);
 
+  // Demote h1 tags in body content to h2 — the hero already has the page H1
+  const contentHtml = isHtml
+    ? guide.content.replace(/<h1(\s|>)/g, "<h2$1").replace(/<\/h1>/g, "</h2>")
+    : null;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: guide.title,
+    description: stripHtml(guide.content).slice(0, 155),
+    url: `https://www.lawnmowers.com/guides/${guide.slug}`,
+    publisher: {
+      "@type": "Organization",
+      name: "Lawnmowers.com",
+      url: "https://www.lawnmowers.com",
+    },
+  };
+
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", background: "var(--cream, #f8f5f0)", minHeight: "100vh" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Nav */}
       <nav style={{
         position: "sticky", top: 0, zIndex: 100,
@@ -92,7 +137,7 @@ export default async function GuidePage({ params }: Props) {
           <div style={{ background: "white", borderRadius: 16, padding: "2rem 2.5rem", boxShadow: "0 2px 12px rgba(0,0,0,0.05)", marginBottom: "1.5rem" }}>
             {isHtml ? (
               <>
-                <div className="guide-content" dangerouslySetInnerHTML={{ __html: guide.content }} />
+                <div className="guide-content" dangerouslySetInnerHTML={{ __html: contentHtml! }} />
                 <InArticleAd />
               </>
             ) : (
