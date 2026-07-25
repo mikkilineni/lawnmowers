@@ -9,7 +9,7 @@ const roboticMowerRedirects = [
   { source: "/blog/2026-05-06-robotic-lawn-mowers-worth-the-investment",   destination: "/blog/2026-07-20-are-robotic-lawn-mowers-worth-it" },
   { source: "/blog/2026-05-19-robotic-lawn-mowers-worth-it",               destination: "/blog/2026-07-20-are-robotic-lawn-mowers-worth-it" },
   { source: "/blog/2026-05-30-robotic-lawn-mowers-worth-the-investment",   destination: "/blog/2026-07-20-are-robotic-lawn-mowers-worth-it" },
-  { source: "/blog/2026-06-06-robotic-lawn-mowers-worth-it",               destination: "/blog/2026-07-20-are-robotic-lawn-mowers-worth-it" },
+  { source: "/blog/2026-06-06-robotic-lawn-mowers-worth-investment",        destination: "/blog/2026-07-20-are-robotic-lawn-mowers-worth-it" },
   { source: "/blog/2026-06-10-robotic-lawn-mowers-worth-it-2026",          destination: "/blog/2026-07-20-are-robotic-lawn-mowers-worth-it" },
 
   // ── Cluster 2: "Complete buyer's guide" ──
