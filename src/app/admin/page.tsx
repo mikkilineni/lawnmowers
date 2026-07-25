@@ -10,12 +10,13 @@ import { HeroAdToggle } from "@/components/HeroAdToggle";
 
 export default async function AdminPage() {
   await seedIfEmpty();
-  const [products, reviews, guides, categories, affiliateLinks, adsSetting, freqSetting, hotPickSetting, allProducts, heroAdEnabledSetting, heroAdSlotSetting] = await Promise.all([
+  const [products, reviews, guides, categories, affiliateLinks, brands, adsSetting, freqSetting, hotPickSetting, allProducts, heroAdEnabledSetting, heroAdSlotSetting] = await Promise.all([
     prisma.product.count(),
     prisma.review.count(),
     prisma.guide.count(),
     prisma.category.count(),
     prisma.affiliateLink.count(),
+    prisma.brand.count(),
     prisma.setting.findUnique({ where: { key: "adsEnabled" } }),
     prisma.setting.findUnique({ where: { key: "adFrequency" } }),
     prisma.setting.findUnique({ where: { key: "hotPickProductId" } }),
@@ -35,6 +36,7 @@ export default async function AdminPage() {
     { label: "Reviews", count: reviews, href: "/admin/reviews", emoji: "⭐" },
     { label: "Guides", count: guides, href: "/admin/guides", emoji: "📖" },
     { label: "Categories", count: categories, href: "/admin/categories", emoji: "📂" },
+    { label: "Brands", count: brands, href: "/admin/brands", emoji: "🏷️" },
   ];
 
   return (

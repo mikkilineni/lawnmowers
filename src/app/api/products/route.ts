@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { seedIfEmpty } from "@/lib/seed";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 export async function GET(request: Request) {
   await seedIfEmpty();
@@ -24,6 +25,8 @@ function toSlug(str: string) {
 }
 
 export async function POST(request: Request) {
+  const deny = await requireAdmin();
+  if (deny) return deny;
   const body = await request.json();
   const slug = body.slug?.trim() || toSlug(`${body.brand} ${body.name}`);
   const product = await prisma.product.create({

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -15,6 +16,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const deny = await requireAdmin();
+  if (deny) return deny;
   const body = await request.json();
   const link = await prisma.affiliateLink.create({
     data: {

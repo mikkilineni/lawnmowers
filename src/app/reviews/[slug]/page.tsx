@@ -1,20 +1,29 @@
+export const revalidate = 3600;
+
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
+import { BADGE_COLORS } from "@/lib/constants";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { ReviewBuyButtons } from "@/components/ReviewBuyButtons";
 import { InArticleAd } from "@/components/InArticleAd";
-
-export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
+const getProduct = cache(async (slug: string) => {
+  return prisma.product.findUnique({
+    where: { slug },
+    include: { affiliateLinks: true },
+  });
+});
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = await prisma.product.findUnique({ where: { slug } });
+  const product = await getProduct(slug);
   if (!product) return { title: "Review Not Found" };
   return {
     title: `${product.brand} ${product.name} Review — Lawnmowers.com`,
@@ -30,11 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ReviewPage({ params }: Props) {
   const { slug } = await params;
 
-  const product = await prisma.product.findUnique({
-    where: { slug },
-    include: { affiliateLinks: true },
-  });
-
+  const product = await getProduct(slug);
   if (!product) notFound();
 
   const tags = product.tags;
@@ -42,36 +47,22 @@ export default async function ReviewPage({ params }: Props) {
   const pros = product.pros;
   const cons = product.cons;
 
-  const allProducts = await prisma.product.findMany({
-    where: { id: { not: product.id } },
+  const related = await prisma.product.findMany({
+    where: {
+      id: { not: product.id },
+      OR: [
+        { categories: { hasSome: categories } },
+        { tags: { hasSome: tags } },
+      ],
+    },
+    take: 3,
+    select: {
+      id: true, slug: true, badge: true, badgeType: true,
+      brand: true, name: true, emoji: true, price: true, image: true,
+    },
   });
 
-  const related = allProducts
-    .filter(p => {
-      const pCats = p.categories;
-      const pTags = p.tags;
-      return pCats.some(c => categories.includes(c)) || pTags.some(t => tags.includes(t));
-    })
-    .slice(0, 3)
-    .map(p => ({
-      id: p.id,
-      slug: p.slug,
-      badge: p.badge,
-      badgeType: p.badgeType,
-      brand: p.brand,
-      name: p.name,
-      emoji: p.emoji,
-      price: p.price,
-      image: p.image,
-    }));
-
-  const badgeColors: Record<string, { bg: string; color: string }> = {
-    best:    { bg: "rgba(168,216,50,0.15)", color: "#5a9e2f" },
-    popular: { bg: "rgba(239,68,68,0.12)",  color: "#ef4444" },
-    new:     { bg: "rgba(56,189,248,0.12)", color: "#0ea5e9" },
-    sale:    { bg: "rgba(251,191,36,0.15)", color: "#d97706" },
-  };
-  const badge = badgeColors[product.badgeType] ?? badgeColors.best;
+  const badge = BADGE_COLORS[product.badgeType] ?? BADGE_COLORS.best;
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", background: "var(--cream, #f8f5f0)", minHeight: "100vh" }}>

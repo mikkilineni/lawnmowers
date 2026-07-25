@@ -1,10 +1,11 @@
+export const revalidate = 3600;
+
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { InArticleAd } from "@/components/InArticleAd";
-
-export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -23,9 +24,13 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+const getGuide = cache(async (slug: string) => {
+  return prisma.guide.findUnique({ where: { slug } });
+});
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const guide = await prisma.guide.findUnique({ where: { slug } });
+  const guide = await getGuide(slug);
   if (!guide) return { title: "Guide Not Found" };
   const description = stripHtml(guide.content).slice(0, 155);
   const url = `/guides/${slug}`;
@@ -45,14 +50,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function GuidePage({ params }: Props) {
   const { slug } = await params;
-  const guide = await prisma.guide.findUnique({ where: { slug } });
+  const guide = await getGuide(slug);
   if (!guide) notFound();
 
-  // Detect if content is HTML (from the editor) or legacy plain text
   const isHtml = guide.content.trimStart().startsWith("<");
   const paragraphs = isHtml ? [] : guide.content.split("\n\n").filter(Boolean);
 
-  // Demote h1 tags in body content to h2 — the hero already has the page H1
   const contentHtml = isHtml
     ? guide.content.replace(/<h1(\s|>)/g, "<h2$1").replace(/<\/h1>/g, "</h2>")
     : null;
@@ -142,10 +145,10 @@ export default async function GuidePage({ params }: Props) {
               </>
             ) : (
               paragraphs.map((para, i) => (
-                <>
-                  <p key={i} style={{ color: "var(--dark, #1c2e0e)", lineHeight: 1.85, fontSize: "0.97rem", marginBottom: "1.25rem" }}>{para}</p>
-                  {i === Math.floor(paragraphs.length / 2) - 1 && <InArticleAd key="ad" />}
-                </>
+                <div key={i}>
+                  <p style={{ color: "var(--dark, #1c2e0e)", lineHeight: 1.85, fontSize: "0.97rem", marginBottom: "1.25rem" }}>{para}</p>
+                  {i === Math.floor(paragraphs.length / 2) - 1 && <InArticleAd />}
+                </div>
               ))
             )}
           </div>

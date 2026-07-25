@@ -471,11 +471,14 @@ const LAWNMOWERS = [
   },
 ];
 
+let _seeded = false;
+
 export async function seedIfEmpty() {
+  if (_seeded) return;
   const count = await prisma.product.count();
   // Reseed if empty or if products are missing image data
   const hasImages = count > 0 && (await prisma.product.findFirst({ where: { image: { not: "" } } }));
-  if (hasImages) return;
+  if (hasImages) { _seeded = true; return; }
 
   await prisma.product.deleteMany();
   await prisma.product.createMany({
@@ -508,4 +511,5 @@ export async function seedIfEmpty() {
 
   const brandCount = await prisma.brand.count();
   if (brandCount === 0) await prisma.brand.createMany({ data: BRANDS.map((name) => ({ name })) });
+  _seeded = true;
 }

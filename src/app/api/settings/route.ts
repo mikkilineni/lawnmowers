@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 const DEFAULTS: Record<string, string> = {
   adsEnabled: "false",
@@ -13,6 +14,8 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
+  const deny = await requireAdmin();
+  if (deny) return deny;
   const body = await request.json();
   const results = await Promise.all(
     Object.entries(body).map(([key, value]) =>

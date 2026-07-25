@@ -1,32 +1,27 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 import { ClientPage } from "@/components/ClientPage";
-import { seedIfEmpty } from "@/lib/seed";
 import prisma from "@/lib/prisma";
 
 export default async function HomePage() {
-  await seedIfEmpty();
-
-  const [products, categories, reviews, guides, brands, adsSetting, freqSetting, hotPickSetting, heroAdEnabledSetting, heroAdSlotSetting] = await Promise.all([
+  const [products, categories, reviews, guides, brands, settings] = await Promise.all([
     prisma.product.findMany({ orderBy: { id: "asc" }, include: { affiliateLinks: true } }),
     prisma.category.findMany({ orderBy: { id: "asc" } }),
     prisma.review.findMany({ orderBy: { id: "asc" } }),
     prisma.guide.findMany({ orderBy: { id: "asc" } }),
     prisma.brand.findMany({ orderBy: { name: "asc" } }),
-    prisma.setting.findUnique({ where: { key: "adsEnabled" } }),
-    prisma.setting.findUnique({ where: { key: "adFrequency" } }),
-    prisma.setting.findUnique({ where: { key: "hotPickProductId" } }),
-    prisma.setting.findUnique({ where: { key: "heroAdEnabled" } }),
-    prisma.setting.findUnique({ where: { key: "heroAdSlot" } }),
+    prisma.setting.findMany(),
   ]);
-  const adsEnabled = adsSetting?.value === "true";
-  const adFrequency = parseInt(freqSetting?.value ?? "4", 10);
-  const hotPickId = hotPickSetting?.value ? parseInt(hotPickSetting.value, 10) : null;
+
+  const settingMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
+  const adsEnabled = settingMap.adsEnabled === "true";
+  const adFrequency = parseInt(settingMap.adFrequency ?? "4", 10);
+  const hotPickId = settingMap.hotPickProductId ? parseInt(settingMap.hotPickProductId, 10) : null;
   const hotPickProduct = hotPickId
     ? products.find((p) => p.id === hotPickId) ?? products[0] ?? null
     : products[0] ?? null;
-  const heroAdEnabled = heroAdEnabledSetting?.value === "true";
-  const heroAdSlot = heroAdSlotSetting?.value ?? "";
+  const heroAdEnabled = settingMap.heroAdEnabled === "true";
+  const heroAdSlot = settingMap.heroAdSlot ?? "";
 
   return (
     <ClientPage

@@ -231,7 +231,7 @@ Do this every spring and your mower will start on the first pull and cut cleanly
   },
 ];
 
-export const BRANDS = ["EGO", "HUSQVARNA", "JOHN DEERE", "TORO", "GREENWORKS", "RYOBI", "CUB CADET", "HONDA", "CRAFTSMAN", "TROY-BILT", "BAD BOY", "ARIENS", "SCAG", "FERRIS", "MAMMOTION", "SEGWAY", "STIHL", "DEWALT", "MAKITA", "FISKARS"];
+export const BRANDS = ["EGO", "HUSQVARNA", "GREENWORKS", "RYOBI"];
 
 export const QUIZ_RESULTS: Record<string, { emoji: string; name: string; price: string }> = {
   electric: { emoji: "⚡", name: "EGO Power+ LM2135SP", price: "$549" },

@@ -45,6 +45,17 @@ export default function AdminProductsPage() {
   });
   const [editors, setEditors] = useState<Record<number, ReviewEditor>>({});
   const [specsOpen, setSpecsOpen] = useState<Record<number, boolean>>({});
+  const [uploading, setUploading] = useState(false);
+  const [imgUploading, setImgUploading] = useState<Record<number, boolean>>({});
+
+  const uploadImage = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    if (!res.ok) throw new Error("Upload failed");
+    const { url } = await res.json();
+    return url;
+  };
 
   const fetch_ = async () => {
     const res = await fetch("/api/products");
@@ -177,7 +188,31 @@ export default function AdminProductsPage() {
             <input placeholder="Savings (e.g. Save $100)" value={form.savings} onChange={e => setForm(f => ({...f, savings: e.target.value}))} style={inputStyle} required />
             <input placeholder="Tags (comma-separated)" value={form.tags} onChange={e => setForm(f => ({...f, tags: e.target.value}))} style={inputStyle} />
             <input placeholder="Categories (e.g. electric,under500)" value={form.categories} onChange={e => setForm(f => ({...f, categories: e.target.value}))} style={inputStyle} />
-            <input placeholder="Image URL" value={form.image} onChange={e => setForm(f => ({...f, image: e.target.value}))} style={{...inputStyle, gridColumn: "1 / -1"}} />
+            <div style={{ gridColumn: "1 / -1", display: "flex", gap: 8, alignItems: "center" }}>
+              <input placeholder="Image URL" value={form.image} onChange={e => setForm(f => ({...f, image: e.target.value}))} style={{...inputStyle, flex: 1}} />
+              <label style={{
+                background: uploading ? "#e5e7eb" : "var(--green)", color: uploading ? "#9ca3af" : "white",
+                border: "none", borderRadius: 6, padding: "8px 14px",
+                fontWeight: 600, fontSize: "0.82rem", cursor: uploading ? "not-allowed" : "pointer", whiteSpace: "nowrap",
+              }}>
+                {uploading ? "Uploading…" : "Upload Image"}
+                <input type="file" accept="image/*" style={{ display: "none" }} disabled={uploading}
+                  onChange={async e => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setUploading(true);
+                    try {
+                      const url = await uploadImage(file);
+                      setForm(f => ({ ...f, image: url }));
+                    } finally {
+                      setUploading(false);
+                      e.target.value = "";
+                    }
+                  }}
+                />
+              </label>
+              {form.image && <img src={form.image} alt="" style={{ height: 40, width: 40, objectFit: "cover", borderRadius: 6, border: "1px solid #ddd" }} />}
+            </div>
             <input placeholder="SEO Slug (e.g. honda-hrx217-review)" value={form.slug} onChange={e => setForm(f => ({...f, slug: e.target.value}))} style={{...inputStyle, gridColumn: "1 / -1"}} />
             <textarea placeholder="Description" value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} style={{...taStyle, gridColumn: "1 / -1", minHeight: 70}} />
             <textarea placeholder="Full Review" value={form.review} onChange={e => setForm(f => ({...f, review: e.target.value}))} style={{...taStyle, gridColumn: "1 / -1", minHeight: 100}} />
@@ -231,6 +266,32 @@ export default function AdminProductsPage() {
                         >
                           {specsOpen[p.id] ? "Close Specs" : "Edit Specs"}
                         </button>
+                        <label style={{
+                          background: "none", border: "1px solid #a8d832", borderRadius: 6,
+                          padding: "4px 10px", cursor: imgUploading[p.id] ? "not-allowed" : "pointer",
+                          color: "var(--green)", fontSize: "0.78rem", opacity: imgUploading[p.id] ? 0.5 : 1,
+                        }}>
+                          {imgUploading[p.id] ? "Uploading…" : "Upload Image"}
+                          <input type="file" accept="image/*" style={{ display: "none" }} disabled={!!imgUploading[p.id]}
+                            onChange={async e => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              setImgUploading(prev => ({ ...prev, [p.id]: true }));
+                              try {
+                                const url = await uploadImage(file);
+                                await fetch(`/api/products/${p.id}`, {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ image: url }),
+                                });
+                                await fetch_();
+                              } finally {
+                                setImgUploading(prev => ({ ...prev, [p.id]: false }));
+                                e.target.value = "";
+                              }
+                            }}
+                          />
+                        </label>
                         {p.slug && (
                           <a href={`/reviews/${p.slug}`} target="_blank" style={{ background: "none", border: "1px solid #ddd", borderRadius: 6, padding: "4px 10px", cursor: "pointer", color: "var(--green)", fontSize: "0.78rem", textDecoration: "none" }}>
                             View

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 function toSlug(brand: string, name: string) {
   return `${brand}-${name}`
@@ -36,6 +37,9 @@ interface ProductInput {
 }
 
 export async function POST(request: Request) {
+  const deny = await requireAdmin();
+  if (deny) return deny;
+
   const rows: ProductInput[] = await request.json();
 
   let added = 0;
@@ -62,8 +66,8 @@ export async function POST(request: Request) {
         tags: row.tags,
         description: row.description || "",
         image: row.image || "",
-        pros: typeof row.pros === 'string' ? row.pros.split('\n').filter(Boolean) : (row.pros ?? []),
-        cons: typeof row.cons === 'string' ? row.cons.split('\n').filter(Boolean) : (row.cons ?? []),
+        pros: typeof row.pros === "string" ? row.pros.split("\n").filter(Boolean) : (row.pros ?? []),
+        cons: typeof row.cons === "string" ? row.cons.split("\n").filter(Boolean) : (row.cons ?? []),
         review: row.review || "",
       };
 
@@ -71,7 +75,6 @@ export async function POST(request: Request) {
 
       if (existing) {
         await prisma.product.update({ where: { slug }, data });
-        // Replace affiliate links
         await prisma.affiliateLink.deleteMany({ where: { productId: existing.id } });
         for (const link of row.affiliateLinks) {
           if (link.retailer && link.url) {

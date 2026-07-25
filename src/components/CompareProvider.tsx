@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 
 const MAX = 4;
 const KEY = "compare_items";
@@ -27,15 +27,18 @@ const CompareContext = createContext<CompareCtx>({
 
 export function CompareProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CompareItem[]>([]);
+  const hydrated = useRef(false);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(KEY);
       if (stored) setItems(JSON.parse(stored));
     } catch { /* ignore */ }
+    hydrated.current = true;
   }, []);
 
   useEffect(() => {
+    if (!hydrated.current) return;
     try {
       localStorage.setItem(KEY, JSON.stringify(items));
     } catch { /* ignore */ }

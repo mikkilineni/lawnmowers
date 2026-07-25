@@ -56,6 +56,7 @@ export function Header({ onOpenQuiz }: HeaderProps) {
           <a href="#categories" style={navLinkStyle}>Types</a>
           <a href="#products" style={navLinkStyle}>Top Picks</a>
           <a href="#guides" style={navLinkStyle}>Guides</a>
+          <a href="/blog" style={navLinkStyle}>Blog</a>
           <button onClick={onOpenQuiz} style={{
             background: "var(--lime)", color: "var(--dark)",
             border: "none", padding: "8px 20px", borderRadius: 6,
@@ -82,6 +83,7 @@ export function Header({ onOpenQuiz }: HeaderProps) {
         <a href="#categories" onClick={close}>Types</a>
         <a href="#products" onClick={close}>Top Picks</a>
         <a href="#guides" onClick={close}>Guides</a>
+        <a href="/blog" onClick={close}>Blog</a>
         <button className="mobile-cta" onClick={() => { close(); onOpenQuiz(); }}>
           Find My Mower
         </button>

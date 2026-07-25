@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -25,12 +26,10 @@ async function fetchThreadComments(permalink: string): Promise<string> {
   const data = await res.json();
   const lines: string[] = [];
 
-  // Post title + body
   const post = data[0]?.data?.children?.[0]?.data;
   if (post?.title) lines.push(`POST: ${post.title}`);
   if (post?.selftext) lines.push(post.selftext.slice(0, 500));
 
-  // Top comments
   const comments = data[1]?.data?.children ?? [];
   for (const c of comments) {
     const body = c.data?.body;
@@ -43,6 +42,9 @@ async function fetchThreadComments(permalink: string): Promise<string> {
 }
 
 export async function POST(request: Request) {
+  const deny = await requireAdmin();
+  if (deny) return deny;
+
   const { brand, name } = await request.json();
 
   if (!brand || !name) {
@@ -54,7 +56,6 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Search Reddit for threads about this product
     const query = `${brand} ${name} review`;
     const permalinks = await searchReddit(query);
 
@@ -62,7 +63,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No Reddit threads found for this product" }, { status: 404 });
     }
 
-    // Fetch comments from top threads
     const threadTexts = await Promise.all(permalinks.map(fetchThreadComments));
     const combinedText = threadTexts.filter(Boolean).join("\n\n---\n\n").slice(0, 8000);
 
@@ -70,7 +70,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Could not extract content from Reddit threads" }, { status: 404 });
     }
 
-    // Ask Claude to generate structured review content
     const response = await client.messages.create({
       model: "claude-haiku-4-5",
       max_tokens: 1024,
@@ -99,7 +98,6 @@ Respond in this exact JSON format:
 
     const text = response.content[0].type === "text" ? response.content[0].text : "";
 
-    // Extract JSON from response
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       return NextResponse.json({ error: "Failed to parse Claude response" }, { status: 500 });

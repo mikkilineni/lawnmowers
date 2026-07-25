@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BADGE_COLORS } from "@/lib/constants";
 
 interface RelatedProduct {
   id: number;
@@ -13,13 +14,6 @@ interface RelatedProduct {
   price: string;
   image: string;
 }
-
-const badgeColors: Record<string, { bg: string; color: string }> = {
-  best:    { bg: "rgba(168,216,50,0.15)", color: "#5a9e2f" },
-  popular: { bg: "rgba(239,68,68,0.12)",  color: "#ef4444" },
-  new:     { bg: "rgba(56,189,248,0.12)", color: "#0ea5e9" },
-  sale:    { bg: "rgba(251,191,36,0.15)", color: "#d97706" },
-};
 
 export function RelatedProducts({ products }: { products: RelatedProduct[] }) {
   if (products.length === 0) return null;
@@ -37,9 +31,9 @@ export function RelatedProducts({ products }: { products: RelatedProduct[] }) {
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "1.25rem" }}>
         {products.map(p => {
-          const relBadge = badgeColors[p.badgeType] ?? badgeColors.best;
+          const relBadge = BADGE_COLORS[p.badgeType] ?? BADGE_COLORS.best;
           return (
-            <Link key={p.id} href={`/reviews/${p.slug}`} style={{ textDecoration: "none" }}>
+            <Link key={p.id} href={p.slug ? `/reviews/${p.slug}` : "/"} style={{ textDecoration: "none" }}>
               <div
                 style={{
                   background: "white", borderRadius: 12, overflow: "hidden",
