@@ -117,16 +117,6 @@ export default async function BlogPostPage({ params }: Props) {
             }}>
               {post.topic.toUpperCase()}
             </span>
-            {post.seoScore != null && (
-              <span style={{
-                background: post.seoScore >= 80 ? "rgba(168,216,50,0.25)" : "rgba(255,255,255,0.1)",
-                color: post.seoScore >= 80 ? "#a8d832" : "rgba(255,255,255,0.7)",
-                padding: "3px 10px", borderRadius: 4,
-                fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em",
-              }}>
-                SEO {post.seoScore}/100
-              </span>
-            )}
           </div>
           <h1 style={{
             fontFamily: "'Bebas Neue', sans-serif",

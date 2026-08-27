@@ -21,7 +21,7 @@ export default async function BlogPage() {
   const posts = await prisma.blogPost.findMany({
     where: { published: true },
     orderBy: { createdAt: "desc" },
-    select: { id: true, title: true, slug: true, excerpt: true, topic: true, seoScore: true, createdAt: true },
+    select: { id: true, title: true, slug: true, excerpt: true, topic: true, createdAt: true },
   });
 
   return (
@@ -80,7 +80,7 @@ export default async function BlogPage() {
                 padding: "1.75rem 2rem",
                 boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
               }}>
-                {/* Topic + SEO score */}
+                {/* Topic */}
                 <div style={{ display: "flex", gap: "0.6rem", marginBottom: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
                   <span style={{
                     background: "#e8f5e9", color: "#1a6b2a",
@@ -89,11 +89,6 @@ export default async function BlogPage() {
                   }}>
                     {post.topic.toUpperCase()}
                   </span>
-                  {post.seoScore != null && (
-                    <span style={{ fontSize: "0.75rem", color: "var(--muted, #8b8680)" }}>
-                      SEO {post.seoScore}/100
-                    </span>
-                  )}
                 </div>
 
                 <Link href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
